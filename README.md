@@ -1,5 +1,5 @@
 # margo
-Open source burrow mound classifier with a graphical interface
+margo - open source burrow mound classifier with a graphical interface
 
 This is an open source archeological data (burow mound) analyser and classifier developed in Vilnius University and
 Institute of Mathematics and Informatics (Lithuania) by Valentas Kurauskas (modelling, programming and machine learning) and Renaldas Augustinavičius (archeology). 

@@ -1,0 +1,79 @@
+version 0.75
+
+
+* fixed more small bugs
+
+* fixed a new bug of duplicates when merging
+
+
+* Parameter renaming
+
+[medium/long]_var_freq ->[medium/long]_var_r1 (wave length) 10 and 20 m
+[medium/long]_var_radius -> [medium/long]_var_r2 (buffer size) 20 and 40 m
+[medium/long]_var_radius_to_exclude->[medium/long]_var_exclude (exclude around center point) 6 and 12 m
+
+added corresponding variables for short frequency noise:
+short_var_r1 2m
+short_var_r2 20m
+short_var_to_exclude 6m
+
+removed vector table parameter LOCAL_VARIANCE
+and added 3 number parameters
+NOISE1 - short range noise
+NOISE2 - medium range noise
+NOISE3 - long range noise
+
+* On shp import gui uses centroid and can import polygons as well
+
+* Join can now be done by distance
+
+* An option to add missing detections
+
+* An option to open and merge multiple files
+
+* Fixed a gmaps selection issue.
+
+
+version 0.74
+
+Overview
+
+-Fixed raster upside down bug
+-All Margo parameters in pixels changed to meters
+-Fixed the RESCALED attribute
+-In GUI we can classify RESCALED with this syntax:
+
+knn.KnnClassifier(k=10, x = lambda z: remove_nans(data("RESCALED"),z))
+
+-In GUI we can draw RESCALED by right-clicking on the 3d plot. Unfortunately matplotlib still does not work completely well with nans.
+-Margo backend can be passed -replace_nan=0.0  (replace nans to 0.0 in RESCALED)
+
+
+***
+
+good_ellipse_min_length 0.7->1.4, px->m
+profile_step, 1m, step from center for elliptic profile
+max_profile_radius_meters, 20, maximum distance from center in the elliptic profile
+
+EllipseNormalizeFilter fixed and improved
+
+default_ditch_distance, 6m
+rescale_step, 1m, steps for rescale
+ditch_threshold, -0.05; radians; angle at which ditch is detected
+fully_normalize, true; RESCALED is always of the same size
+squeeze, true; in RESCALED, ellipses are squeezed to circles
+
+AREA - in meters now
+
+min_blob_area, 8 m (was in px*px)
+max_blob_area, 320 m 
+
+min_mound_area, 4px*px->16m*m
+max_mound_area, 35px*px->140m*m
+
+max_ellipse_radius, 10px->20m
+good_ellipse_max_mse, 0.5px*px -> 2m*m
+max_ellipse_combined_mse, 3px*px->12m*m
+good_ellipse_mse_auto_select, 0.1px*px->0.4m*m
+
+min_ellipse_diameter->min_ellipse_a = 2m

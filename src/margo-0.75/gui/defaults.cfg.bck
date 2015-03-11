@@ -1,0 +1,9 @@
+show_only_filtered=True
+raster_light_angle=304
+raster_light_altitude=30
+margo_params=-algo=SLICES;-max_noise=0.9;-min_mound_height=0.6;-min_blob_area=8;-min_mound_area=8;-max_blob_height=2;-max_mound_height=2;-good_ellipse_levels=2;-min_ellipse_a=2;-ref_ellipse_id=1;-max_mound_area=140
+raster_window_size=200
+margo_location=../bin/margo
+last_clf_classifier=knn.KnnClassifier
+margo_mask_dir=../templates/masks2/
+gmaps_show_column=SCORE

@@ -1,0 +1,1 @@
+margo.exe C:\hfz\85_44.hfz -mask=../templates/masks2/ -output_dir=../output/ -algo=SLICES -max_noise=0.9 -min_mound_height=0.6 -min_blob_area=2 -min_mound_area=2 -max_blob_height=2 -max_mound_height=2 -good_ellipse_levels=2 -min_ellipse_diameter=2 -ref_ellipse_id=1 -max_mound_area=35

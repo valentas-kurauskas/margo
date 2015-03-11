@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=0.73
+Type=Application
+Terminal=false
+Exec=sh -c "cd /home/diezel/arch_data/src/gui; python explore.py"
+#Exec=sh -c "cd /home/diezel/tmp; python hello.py"
+#Exec=python /home/diezel/arch_data/src/gui/explore.py
+Name=Margo GUI
+Comment=Margo
+Icon=/home/diezel/Dropbox/arch/src/gui/etc/boa3.png
+StartupWMClass=explore.py

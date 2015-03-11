@@ -1,0 +1,86 @@
+Parameters that work for all mounds
+
+-algo=SLICES
+-min_blob_area=8.0
+-max_blob_area=1000
+-max_blob_height=100
+-min_mound_area=8.0
+-max_mound_area=300
+-min_mound_height=0.6
+-max_mound_height=2
+-max_noise=0.9
+-good_ellipse_levels=2
+-min_ellipse_a=2.0
+-ref_ellipse_id=1
+-max_ellipse_a=8
+-max_ellipse_asymmetry=1.5
+-max_ellipse_combined_mse=16
+-min_median_correlation=0.28
+-center_type=ellipse_center
+
+
+Parameters for small and medium-sized mounds
+
+-algo=SLICES
+-min_blob_area=8.0
+-max_blob_area=200
+-max_blob_height=3
+-min_mound_area=8.0
+-max_mound_area=200
+-min_mound_height=0.6
+-max_mound_height=2
+-max_noise=0.9
+-good_ellipse_levels=2
+-min_ellipse_a=2.0
+-ref_ellipse_id=1
+-max_ellipse_a=8
+-max_ellipse_asymmetry=1.5
+-max_ellipse_combined_mse=16
+-min_median_correlation=0.28
+-center_type=ellipse_center
+-squeeze=false
+-steps_from_ditch=2
+-default_ditch_distance=6
+-rescale_step=2
+
+
+Parameters for large mounds
+
+Note: to get normalized profiles (RESCALED) of the same size,
+steps_from_ditch should match, and the ratio of default_ditch_distance with rescale_step has to be the same:
+
+RESCALED_WIDTH = 2 * [(default_ditch_distance / rescale_step)] + 2 * steps_from_ditch,
+where [x] is rounding to the nearest integer
+
+
+-algo=SLICES
+-min_blob_area=100.0
+-max_blob_area=1000
+-max_blob_height=100
+-min_mound_area=100.0
+-max_mound_area=1200
+-min_mound_height=0.6
+-max_mound_height=4
+-max_noise=0.9
+-good_ellipse_levels=1
+-min_ellipse_a=4.0
+-ref_ellipse_id=0
+-max_ellipse_a=20
+-max_ellipse_asymmetry=1.3
+-max_ellipse_combined_mse=32
+-min_median_correlation=0.28
+-ellipse_step=0.5
+-default_ditch_distance=12
+-rescale_step=2
+-max_ellipse_radius=40
+-slicing_height=1.2
+-averaging_radius=14
+-profile_step=2
+-good_ellipse_min_length=2.8
+-good_ellipse_max_mse=32
+-max_profile_radius_meters=40
+-raw_heights_radius=10
+-steps_from_ditch=2
+-center_type=ellipse_center
+-squeeze=false
+

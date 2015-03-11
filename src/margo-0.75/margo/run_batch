@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for inputfile in $( find $1 -name "*.hfz" )
+  do
+    echo ./margo64 $inputfile -algo=SLICES -mask=../learning/selected/ -output_dir=$2
+    ./margo64 $inputfile -algo=SLICES -mask=../learning/selected/ -output_dir=$2
+  done
+

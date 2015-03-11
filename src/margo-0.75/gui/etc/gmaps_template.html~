@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html style="height:100%"> 
+<head> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <title>Google Maps Multiple Markers</title> 
+  <script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
+</head> 
+<body style="height:100%">
+<div id="map" style="height: 100%"> </div>
+
+  <script type="text/javascript">
+    var locations = [
+    __POINT__LIST__ 
+    ];
+
+    //var marker_types = [
+    //__MARKER__TYPE__LIST__
+    //];
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: __ZOOM__,
+      center: new google.maps.LatLng(__CENTER__COORDS__),
+      mapTypeId: google.maps.MapTypeId.HYBRID
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    var marker, i;
+    var markers = [];
+
+    for (i = 0; i < locations.length; i++) {  
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+        map: map,
+        icon: 'file:///__CURRENT__DIR__detection.png'; //, 'file:///__CURRENT__DIR__selected.png'][marker_types[i] % 2]
+      });
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+	return function() {
+          //markers[i].setIcon('file:///__CURRENT__DIR__orange-dot.png')
+          infowindow.setContent(locations[i][0]);
+          infowindow.open(map, marker);
+          outside.map_clicked(locations[i][0]);              
+        }
+      })(marker, i));
+      markers[i] = marker;
+    }
+  </script>
+</body>
+</html>

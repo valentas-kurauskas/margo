@@ -311,6 +311,7 @@ def parse_file(fname): #if too large, we should store keys in a header
                 all_cols.append(k)
             v = line[eqpos+1:]
             v = v.strip()
+            v = v.replace("1.#QNAN0", "nan") #windows gives different strange output
             v = v.replace("1.#QNAN", "nan") #windows gives different output
             if k in NUMERIC_FEATURES:
                 try:

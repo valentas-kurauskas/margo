@@ -6,7 +6,7 @@ Institute of Mathematics and Informatics (Lithuania) by Valentas Kurauskas (mode
 
 It consists of two parts: a raster data processor, written in C++ and a graphical interface, written in Python (using PyQt, matplotlib, sklearn, gdal).
 
-The current version of the raster processor works only with raster files in hfz format and supports only LKS-94 (Lithuanian) coordinate system. (The graphical interface should work with many projections and formats supported by GDAL). In the nearest future, arbitrary projections and many raster data formats will be supported via GDAL.
+At present the raster processor works only with raster files in hfz format and supports only LKS-94 (Lithuanian) coordinate system. The graphical interface should work with many projections and formats supported by GDAL. 
 
 Documentation: see doc/ (to be added more).
 

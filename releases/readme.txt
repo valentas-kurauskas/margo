@@ -1,1 +1,7 @@
-Standalone windows binaries are available. Please email me valentas.kurauskas@mif.vu.lt.
+The standalone versions of Margo are built with 
+
+PyInstaller: https://github.com/pyinstaller/pyinstaller/wiki
+
+and (the installer) with
+
+NSIS: http://nsis.sourceforge.net/License.

@@ -1,3 +1,5 @@
 defaults.cfg
 layout.ini
 X.pickle
+build
+dist

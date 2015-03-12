@@ -2,7 +2,7 @@
 #this is a PyInstaller spec file to create a standalone version
 
 a = Analysis(['explore.py'],
-             pathex=['c:\\code\\arch\\build\\margo-0.75\\gui'],
+             pathex=['c:\\code\\arch\\margo\\gui'],
              hiddenimports=['scipy.special._ufuncs_cxx', 'sklearn.utils.lgamma', 'sklearn.utils.weight_vector', 
                  'sklearn.utils.arraybuilder', 'Tkinter', 'FixTk', '_tkinter', 'Tkconstants', 'FileDialog', 'Dialog',
  	 	       'mpl_toolkits'],

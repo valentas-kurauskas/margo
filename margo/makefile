@@ -68,8 +68,11 @@ MConstraints.o: MConstraints.h MConstraints.cpp
 
 
 
-clean:
-	rm -f *.o margo convert_shp
+clean: cleanshp
+	rm -f *.o ../bin/margo ../bin/convert_shp ../bin/margo.exe ../bin/convert_shp.exe; rm -f ../libhfz/*.o
+
+cleanshp:
+	cd ../shapelib/shapelib-1.3.0/; $(MAKE) clean
 
 clean_win:
 	del *.o margo.exe

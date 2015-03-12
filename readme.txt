@@ -1,4 +1,4 @@
-Margo 0.75: Archeological raster data processor and semi-automatic burrow mound classifier.
+Margo: Archeological raster data processor and semi-automatic burrow mound classifier.
 
 Author: Valentas Kurauskas (Vilnius University)
 

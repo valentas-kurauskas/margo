@@ -1,10 +1,18 @@
-version 0.75
-
-
+Version 0.76 (GitHub release)
 * fixed more small bugs
-
 * fixed a new bug of duplicates when merging
 
+New backend parameter:
+center_type=max_height(default)/ellipse_center/mass_center
+Uses MAX_HEIGHT coordinate initially, but switches to specified
+coordinate for the output
+
+GUI:
+Classifier does cross-validation when train and test sets are the same.
+Classifier uses cache and is faster now. See example in filters.txt.
+All combinations of checkboxes are now implemented.
+
+version 0.75
 
 * Parameter renaming
 

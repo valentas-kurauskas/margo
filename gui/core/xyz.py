@@ -32,6 +32,11 @@ class CoordDB:
                     self.data[c].append(element[c])
                 else:
                     self.data[c].append(None)
+    
+    def get_copy(self):
+        k = self.data.keys()
+        v = [[x for x in self.data[kk]] for kk in k]
+        return CoordDB(self.column_names, dict(zip(k,v)), self.meta)
 
     #slow function to get all points inside a bounding box, returns indices
     def filter_rectangle(self, minx, maxx, miny, maxy, convert_to_wgs=False):

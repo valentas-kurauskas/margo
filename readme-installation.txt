@@ -1,6 +1,6 @@
 Margo: Archeological raster data processor and semi-automatic burrial mound classifier.
 
-Licence for the original code (for dependencies see their separate licences): MIT, see LICENCE.md
+Licence for the original code (for dependencies see their separate licences): MIT, see LICENCE.
 
 RUNNING GUI WITH PYTHON
 

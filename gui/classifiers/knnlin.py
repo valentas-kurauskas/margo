@@ -9,7 +9,7 @@ class KnnLinClassifier(LinearClassifier):
     '''
     Run knn classifier, then run a linear classifier on the result.
     Parameters:
-    x = data(1, "NEIGHBOURS_GOOD", "KNN_PROB", "ELLIPSE_VERT_MSE"), y = indicator("SCORE"), result = "LR_PROB", k = 10, x_knn = normalized_profile
+    x = data(1, "NEIGHBOURS_GOOD", "KNN_PROB", "ELLIPSE_VERT_MSE"), y = indicator("SCORE"), result = "LR_PROB", k = 10, x_knn = normalized_profile, reuse=False
     '''
     def __init__(self, 
             #x_getter = lambda r: (1, r["NEIGHBOURS_GOOD"], access(r, "KNN_PROB"), min(r["ELLIPSE_VERT_MSE"], 0.2)), 
@@ -18,9 +18,12 @@ class KnnLinClassifier(LinearClassifier):
             result = "LR_PROB", 
             k = 10,
             x_knn = normalized_profile,
-            preprocess_fun = None):
+            preprocess_fun = None, reuse = False):
         LinearClassifier.__init__(self, x, y, result, preprocess_fun)
         self.knn = KnnClassifier(x_knn, y, k)
+        if reuse:
+            self.test_files = self.test_files_reuse
+            self.train_files = self.train_files_reuse
        
 
     def custom_loader(self, i): #tweak
@@ -43,4 +46,13 @@ class KnnLinClassifier(LinearClassifier):
         self.knn.show_info = self.show_info
         self.knn_result = self.knn.test_files(files)
         data = self.load_data(files, data_loader = self.custom_loader)
+        return self.test(data)
+
+    def train_files_reuse(self, files):
+        data = self.load_data(files)
+        return self.train(data)
+
+
+    def test_files_reuse(self, files):
+        data = self.load_data(files)
         return self.test(data)

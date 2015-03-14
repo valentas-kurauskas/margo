@@ -1,12 +1,6 @@
 Margo: Archeological raster data processor and semi-automatic burrial mound classifier.
 
-Author: Valentas Kurauskas (Vilnius University)
-
-Licence for the original code (for dependencies see their separate licences): MIT
-
-
-Standalone windows binaries available from me (valentas.kurauskas@mif.vu.lt).
-
+Licence for the original code (for dependencies see their separate licences): MIT, see LICENCE.md
 
 RUNNING GUI WITH PYTHON
 

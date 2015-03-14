@@ -17,6 +17,7 @@ from classifiers import *
 from classifier import *
 import numpy as np
 import sklearn
+import time
 
 class ClassifierDialog(Ui_Dialog):
     def __init__(self):
@@ -118,6 +119,31 @@ class ClassifierDialog(Ui_Dialog):
         if self.current_app is not None:
             self.current_app.processEvents()
 
+
+    def run1(self, cl, train_items, test_items, output_dir, save_data=True, combine=False, combined_name=None):
+            cl.show_info = self.appendOutput
+            cl.train_files(train_items)
+
+            result = cl.test_files(test_items)
+            self.appendOutput("Statistics:\n")
+            cl.show_stats(result)
+
+            if combined_name == None:
+                combined_name = "clf_"+time.strftime("%Y%m%d_%H%M%S")+".xyz"
+
+
+            if save_data and not combine: 
+                cl.reattach_and_save_all(result, output_dir)
+            if save_data and combine: 
+                cl.reattach_combine_and_save_all(result, output_dir, combined_name)
+            if not save_data and combine:
+                path = output_dir + combined_name
+                self.appendOutput("Saving to "+path)
+                result.save_xyz(path)
+            if not save_data and not combine: #do not save data columns and do not combine
+                cl.save_all(result,  output_dir)
+
+
     def run(self):
         try:
             train_items = [str(self.listWidget.item(i).text()) for i in range(self.listWidget.count())]
@@ -131,24 +157,18 @@ class ClassifierDialog(Ui_Dialog):
             config.set("last_clf_classifier", str(self.comboBox.currentText()))
             config.set("last_clf_script_" + str(self.comboBox.currentText()), self.lineEdit_2.toPlainText())
             self.appendOutput("Run pressed\n")
+            cl = eval(str(self.lineEdit_2.toPlainText())) #expects something like ".knn.KnnClassifier()"
 
-            cl = eval(str(self.lineEdit_2.toPlainText())) #expects something like KnnClassifier("ELLIPSE_PROFILE", "SCORE", 10)
-            cl.show_info = self.appendOutput
-            cl.train_files(train_items)
-
-            result = cl.test_files(test_items)
-            self.appendOutput("Statistics:\n")
-            cl.show_stats(result)
-
-            if self.checkBox.isChecked() and not self.checkBox_2.isChecked(): #save data columns, not combine
-                cl.reattach_and_save_all(result, str(self.lineEdit.text())+os.sep)
-            if self.checkBox.isChecked() and self.checkBox_2.isChecked(): #save data columns, combine
-                cl.reattach_combine_and_save_all(result, str(self.lineEdit.text())+os.sep)
-            if not self.checkBox.isChecked() and self.checkBox_2.isChecked(): #do not save data columns and combine
-                path = str(self.lineEdit.text()) + os.sep + "clf.xyz"
-                self.appendOutput("Saving to "+path)
-                result.save_xyz(path)
-            if not self.checkBox.isChecked() and not self.checkBox_2.isChecked(): #do not save data columns and do not combine
-                cl.save_all(result,  str(self.lineEdit.text())+os.sep)
+            if (set(train_items) == set(test_items)):
+                 r = QtGui.QMessageBox.question(self.dialog, "Margo GUI", "Train and test files are the same. Do you want to run cross-validation?", QtGui.QMessageBox.No | QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
+                 if r == QtGui.QMessageBox.Yes:
+                    for j,x in enumerate(test_items):
+                        self.appendOutput("Cross-validation "+str(j+1)+ " of " + str(len(test_items)) +": "+os.path.basename(test_items[j]))
+                        self.run1(cl, [z for z in train_items if z !=x], [x],
+                            str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
+                 else: 
+                        self.run1(cl, train_items, test_items, 
+                                str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
         except:
             self.appendOutput("Error: " + traceback.format_exc()+"\n")
+

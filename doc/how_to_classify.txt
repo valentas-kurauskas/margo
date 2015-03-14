@@ -1,0 +1,45 @@
+Running knn and proximity classifiers efficiently
+
+
+1. Select multiple files as training set.
+2. Select the same files as test set.
+3. In the classifiers box select knn.KnnClassifier() and enter the following parameters
+
+    knn.KnnClassifier(k=10, x = lambda z: remove_nans(data('RESCALED'),z))
+
+    k means the number of closest shapes to find
+    x is the input function. Note that x is not a number, it is a function passed as an argument. This function
+    is created by using a python lambda function syntax, and two Margo GUI functions:
+
+    remove_nans(f, row)
+
+    where row is a database row
+    and f is a function that formats this row into a vector of numbers.
+
+    Here as f, we passed data('RESCALED'). That is again a Margo GUI function (see classifier.py), and it returns
+    a function that acts on rows and extracts the column RESCALED.
+
+    We could use simply 
+
+    knn.KnnClassifier(k=10, x = lambda z: z["RESCALED"])
+
+    but the functions data and remove_nans make sure that bad data is converted into None values, otherwise the classifier will fail.
+
+4.  Uncheck the box "Save results to one file" and check "Save data columns", and specify a new empty directory as output.
+
+5. Click "Run", and when asked if you want to do cross-validation, select "Yes". Now the classifier will be run for n times if there are n items, excluding one of the files each time and treating it as a test set.
+
+
+Now you have a result in the output directory - the old files with a column KNN_PROB appended. 
+
+If can change the classifier to proximity.ProximityClassifier(), select a new empty output directory and enter
+
+proximity.ProximityClassifier(x_knn = lambda z: remove_nans(data('RESCALED'),z)).
+
+This will work, but can be slow, since Proximity classifier will have to calculate KNN_PROB attribute again.
+
+6. To speed it up, select all files in the knn output directory as both test and train sets and enter script:
+
+proximity.ProximityClassifier(x_knn = lambda z: remove_nans(data('RESCALED'),z), reuse = True).
+
+This time, the ProximityClassifier will load KNN_PROB attribute from the already stored file.

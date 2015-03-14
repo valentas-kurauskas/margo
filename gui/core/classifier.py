@@ -27,10 +27,12 @@ def isbad(v):
 
 
 class Classifier(object):
-    def __init__(self):
+    def __init__(self, use_fcache = True):
         self.last_data = None
         self.y_is_1d = True
         self.preprocess = lambda x: x #to do: find a nicer way to add new columns?
+        self.use_fcache = use_fcache
+        self.fcache = {}
 
     def show_info(self, x):
         print(x)
@@ -39,52 +41,61 @@ class Classifier(object):
     def name(cls):
         return cls.__name__
     
-    def load_data(self, files, load_y = None, data_loader = parse_file):
-        data = []
-        X = []
-        Y = []
-        F = []
-        I = []
-        cx = []
-        cy = []
-        fnames = []
-        #print ("Loading", str(files), data_loader)
-        for j in range(len(files)):
-            fname = os.path.basename(files[j])
-            self.show_info("Loading file "+str(1+j) + " of "+str(len(files)) + " " + fname +"\n")
-            res = data_loader(files[j])
+    def load_file(self, filename, data_loader,info=None):
+            cn = ["LONGITUDE", "LATITUDE", "FNAME", "INDEX", "X"]
+            if filename in self.fcache: 
+                r = self.fcache[filename]
+                if "Y" in r.data:
+                    cn = cn + ["Y"]
+                for x in r.data.keys():
+                    if not x in cn: r.data.pop(x)
+                r.column_names = [x for x in r.column_names if x in cn]
+                return r
+            if info is not None:
+                self.show_info(info)
+            res = data_loader(filename)
             self.preprocess(res)
             x = self.get_x(res)
             good =[i for i in range(res.size) if not isbad(x[i])]
 
-            if (load_y == None):
-                load_y = self.has_y(res) #loads Y if it is in the data
-                print ("Labels present: "+str(load_y))
-
+            load_y = self.has_y(res) #loads Y if it is in the data
+            self.show_info("Labels present: "+str(load_y)+"\n")
 
             if load_y:
                 y = self.get_y(res)
                 good = [i for i in good if not isbad(y[i])]
-                Y.extend([y[i] for i in good])
             
-            F.extend([j] * len(good)) # file ids
-            I.extend(good)
-            X.extend([x[i] for i in good])
-            cx.extend([res.data["LONGITUDE"][i] for i in good])
-            cy.extend([res.data["LATITUDE"][i] for i in good])
-            fnames.extend(len(good) * [fname])
-        #print ("load_y:"+str(load_y))
-        result = {}
-        result["LONGITUDE"] = cx
-        result["LATITUDE"] = cy
-        result["INDEX"] = I
-        result["FILE_ID"] = F
-        result["X"]  = X
-        result["FNAME"] = fnames
-        self.last_result = CoordDB(["LONGITUDE", "LATITUDE", "FNAME", "FILE_ID", "INDEX", "X"], result, {"files": files})
-        if load_y:
-            self.last_result.data["Y"] = Y
-            self.last_result.column_names.append("Y")
+            X = [x[i] for i in good]
+            cx = [res.data["LONGITUDE"][i] for i in good]
+            cy = [res.data["LATITUDE"][i] for i in good]
+            fnames = len(good) * [os.path.basename(filename)]
+            dat = {"LONGITUDE": cx, "LATITUDE": cy, "FNAME": fnames, "INDEX": good, "X": X}
+            res = CoordDB(cn, dat)
+            if load_y:
+                res.column_names.append("Y")
+                res.data["Y"] = [y[i] for i in good]
+            if self.use_fcache:
+                self.fcache[filename] = res
+            return res
+
+
+    def load_data(self, files, load_y = None, data_loader = parse_file):
+        #print ("Loading", str(files), data_loader)
+        for j in range(len(files)):
+            new = self.load_file(files[j], data_loader, "Loading file "+str(1+j) + " of "+str(len(files)) + " " + os.path.basename(files[j]) +"\n")
+            if load_y and not "Y" in new.data:
+                raise RuntimeError("Y (score) column is missing")
+            if load_y==False and "Y" in new.data:
+                new.data.pop("Y")
+                new.column_names.remove("Y")
+            new.data["FILE_ID"] = new.size * [j]
+            new.column_names.insert(2,"FILE_ID")
+            if j == 0:
+                data = new.get_copy()
+            else:
+                data.union(new)
+        data.meta = {"files": files} 
+        self.last_result = data
         return self.last_result
 
     

@@ -1,1 +1,1 @@
-Just some example data files
+Example input (hfz) and output (xyz) files

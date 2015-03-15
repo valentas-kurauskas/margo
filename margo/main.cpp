@@ -189,7 +189,7 @@ void sliced_components_plan(MProcessor& proc, vector<string>& to_save) {
                                                double_setting("default_ditch_distance", 6), 
                                                double_setting("ditch_threshold",-0.05),
                                                double_setting("good_ellipse_min_length", 1.4),
-                                               double_setting("good_ellipse_max_mse", 0.5),
+                                               double_setting("good_ellipse_max_mse", 2),
                                                bool_setting("fully_normalize", true),
                                                int_setting("steps_from_ditch", 1)));
   

@@ -46,7 +46,7 @@ int number_of_good_ellipses(MBlobObjectLocal * y) {
     for (int i = 0; i < y->n_ellipses; i++) {
         float mse = y->ellipse_mse[i]; 
         float  length = sqrt( sqr(y->ellipse_a[i]) + sqr(y->ellipse_b[i]));
-        if ( (length >= double_setting("good_ellipse_min_length", 1.4) ) && (mse != NAN) && (mse < double_setting("good_ellipse_max_mse",0.5))) good_ellipses++;
+        if ( (length >= double_setting("good_ellipse_min_length", 1.4) ) && (mse != NAN) && (mse < double_setting("good_ellipse_max_mse",2))) good_ellipses++;
     };
     return good_ellipses;
 }
@@ -101,7 +101,7 @@ bool select2 (MCoordDBElement * el) {
          (blob->median_correlation() >  double_setting("min_median_correlation", 0.31)) &&
          (blob->variances[VAR_MEDIUM_IDX] < double_setting("max_noise", 0.9)) && 
          (ellipse_asymmetry(blob) < double_setting("max_ellipse_asymmetry", 1.0)) &&
-         (blob->n_ellipses>=int_setting("good_ellipse_levels",2)) &&
+         (blob->n_ellipses>=int_setting("good_ellipse_levels",3)) &&
          (blob->ellipse_a[ref_ellipse_id] >= double_setting("min_ellipse_a", 2)) &&
          (blob->ellipse_a[ref_ellipse_id] <= double_setting("max_ellipse_a", 6.2)) &&
          //(blob->n_neighbours < 15) && //nepamato didelių pilkapynų!!!

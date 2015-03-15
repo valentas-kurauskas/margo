@@ -10,6 +10,7 @@ Parameters that work for all mounds
 -max_mound_height=2
 -max_noise=0.9
 -good_ellipse_levels=2
+-good_ellipse_max_mse=2.0
 -min_ellipse_a=2.0
 -ref_ellipse_id=1
 -max_ellipse_a=8
@@ -31,6 +32,7 @@ Parameters for small and medium-sized mounds
 -max_mound_height=2
 -max_noise=0.9
 -good_ellipse_levels=2
+-good_ellipse_max_mse=2.0
 -min_ellipse_a=2.0
 -ref_ellipse_id=1
 -max_ellipse_a=8

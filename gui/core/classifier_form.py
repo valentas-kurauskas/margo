@@ -159,14 +159,17 @@ class ClassifierDialog(Ui_Dialog):
             self.appendOutput("Run pressed\n")
             cl = eval(str(self.lineEdit_2.toPlainText())) #expects something like ".knn.KnnClassifier()"
 
-            if (set(train_items) == set(test_items)):
+            cv = False
+            if (set(train_items) == set(test_items)) and len(train_items) > 1:
                  r = QtGui.QMessageBox.question(self.dialog, "Margo GUI", "Train and test files are the same. Do you want to run cross-validation?", QtGui.QMessageBox.No | QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
                  if r == QtGui.QMessageBox.Yes:
+                    cv = True
+            if cv:
                     for j,x in enumerate(test_items):
                         self.appendOutput("Cross-validation "+str(j+1)+ " of " + str(len(test_items)) +": "+os.path.basename(test_items[j]))
                         self.run1(cl, [z for z in train_items if z !=x], [x],
                             str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
-                 else: 
+            else: 
                         self.run1(cl, train_items, test_items, 
                                 str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
         except:

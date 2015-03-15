@@ -169,6 +169,7 @@ class SurfaceBrowser(QtGui.QWidget):
     def rectangle_selected(self, eclick, erelease):
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
+        print ("rectangle", x1, y1, x2,y2)
         rows = self.source.db().filter_rectangle(min(x1,x2), max(x1,x2), min(y1,y2), max(y1,y2))
         self.source.select_rows(rows)
 

@@ -43,7 +43,7 @@ Parameters for small and medium-sized mounds
 -squeeze=false
 -steps_from_ditch=2
 -default_ditch_distance=6
--rescale_step=2
+-rescale_step=1
 
 
 Parameters for large mounds

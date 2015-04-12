@@ -10,4 +10,4 @@ At present the raster processor works only with raster files in hfz format and s
 
 Documentation: see doc/ (to be added more).
 
-Comments and feedback is welcome: valentas.kurauskas@mif.vu.lt.
+Comments and feedback is welcome: myfirstname@gmail.com.

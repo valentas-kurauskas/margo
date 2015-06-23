@@ -369,7 +369,7 @@ class CustomizedClassifier(Classifier):
             raise
         except:
             self.show_info(traceback.format_exc())
-            print ('''Saving X to X.pickle; python -ic "import pickle; X =pickle.load(open('X.pickle','rb'))" to find problem''')
+            print ('''Saving X to X.pickle; python -ic "import pickle; X = pickle.load(open('X.pickle','rb'))" to find problem''')
             f = open("X.pickle", "wb")
             pickle.dump(db.data["X"],f)
             f.close()

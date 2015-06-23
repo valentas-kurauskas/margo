@@ -407,6 +407,7 @@ class MainWindowContents(QtGui.QWidget):
         self.canvas3dMenu = QtGui.QMenu(self)
         ca = QtGui.QAction('Draw RESCALED', self)
         ca.triggered.connect(self.update_3d)
+        #ca.triggered.connect(lambda x: self.figure3d.gca(projection='3d').relim())
         ca.setCheckable(True)
         self.canvas3dMenu.addAction(ca)
         self.draw3d_rescaled_action = ca
@@ -454,8 +455,11 @@ class MainWindowContents(QtGui.QWidget):
         if (not self.canvas3d.corresponding_dock.isVisible()):
             return;
         ax3 = self.figure3d.gca(projection='3d')
-        ax3.cla()
-        ax3.grid(b=False)
+        #ax3.cla()
+        #ax3.grid(b=False)
+        try:
+            self.surface3dplot.remove()
+        except: pass
 
         if self.table.model() is None: return
         if self.draw3d_rescaled_action.isChecked():
@@ -502,10 +506,12 @@ class MainWindowContents(QtGui.QWidget):
         #ax3 = self.figure3d.add_subplot(111, projection='3d')
 
         ax3.hold(False)
-        ax3.plot_surface(x,y,z, rstride=1, cstride=1, cmap=cm.jet, vmin = np.nanmin(z), vmax=np.nanmax(z))
+        self.surface3dplot = ax3.plot_surface(x,y,z, rstride=1, cstride=1, cmap=cm.jet, vmin = np.nanmin(z), vmax=np.nanmax(z))
         ax3.set_xlabel("width, px")
         ax3.set_ylabel("length, px")
         ax3.set_zlabel("height, m")
+        
+        ax3.relim() #does not work... todo: fix
 
         self.canvas3d.draw()
 
@@ -685,7 +691,7 @@ class MainWindowContents(QtGui.QWidget):
         for r in self.table.selected_rows():
             #print ("selected row: ", r)
             y = self.table.db().get_item(r, "ELLIPSE_PROFILE")
-            if y == None:
+            if y == None or len(y) == 0:
                 continue
             hfactor = 1.0
 

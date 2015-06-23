@@ -166,7 +166,7 @@ class ClassifierDialog(Ui_Dialog):
                     cv = True
             if cv:
                     for j,x in enumerate(test_items):
-                        self.appendOutput("Cross-validation "+str(j+1)+ " of " + str(len(test_items)) +": "+os.path.basename(test_items[j]))
+                        self.appendOutput("Cross-validation "+str(j+1)+ " of " + str(len(test_items)) +": "+os.path.basename(test_items[j]) +"\n")
                         self.run1(cl, [z for z in train_items if z !=x], [x],
                             str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
             else: 

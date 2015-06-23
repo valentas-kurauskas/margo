@@ -14,7 +14,7 @@ class SVM_G (svm.SVC):
 
     def fit(self, X_train, y_train):
         X_train = np.array(X_train)
-        y_train = np.array(y_train)
+        y_train = np.array(y_train).astype(float)
         if self.enhanced:
             t = 10*sum(y_train > 0)
             X_train1 = X_train[y_train > 0]
@@ -37,7 +37,7 @@ class SVM_G (svm.SVC):
 
 
 class SVMClassifier_G(CustomizedClassifier):
-    u'''
+    '''
     Standard SVM classifier (GŠ). Parameters: x=data("RAW_HEIGHTS"), y=exceeds("SCORE", 0.5), enhanced=False, result = "SVM_G"
     '''
     def __init__(self, x=data("RAW_HEIGHTS"), y=exceeds("SCORE", 0.5), enhanced=False, result = "SVM_G"):

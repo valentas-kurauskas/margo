@@ -32,7 +32,7 @@ Running knn and proximity classifiers efficiently
 
 Now you have a result in the output directory - the old files with a column KNN_PROB appended. 
 
-If can change the classifier to proximity.ProximityClassifier(), select a new empty output directory and enter
+You can change the classifier to proximity.ProximityClassifier(), select a new empty output directory and enter
 
 proximity.ProximityClassifier(x_knn = lambda z: remove_nans(data('RESCALED'),z)).
 

@@ -71,8 +71,8 @@ void load_mask( std::string path, std::string& identifier, int& w, int& h, float
 
 
 
-int StringToNumber ( const std::string Text )//Text not by const reference so that the function can be used with a 
-{                               //character array as argument
+int StringToNumber ( const std::string Text )
+{                              
     std::stringstream ss(Text);
 	int result;
 	return ss >> result ? result : -1;

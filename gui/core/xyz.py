@@ -12,9 +12,9 @@ NUMERIC_FEATURES = INT_FEATURES + ["MAX_HEIGHT","AREA", "MEDIAN_CORRELATION", "C
 
 #stores values by column
 class CoordDB:
-    def __init__(self, column_names, data, meta = {}):
+    def __init__(self, column_names, data, meta = None):
         self.data = {}
-        self.meta = meta
+        self.meta = meta if meta is not None else {}
         column_names = [x for x in column_names if not x in VECTOR_FEATURES] + [x for x in column_names if x in VECTOR_FEATURES]
         self.column_names = column_names
 
@@ -135,7 +135,9 @@ class CoordDB:
             f.write(str(self.data["LONGITUDE"][i]) + ","+str(self.data["LATITUDE"][i])+"\n\n")
         f.close()
 
-    def save_csv(self, fname, skip_indices = [], skip_columns = []):
+    def save_csv(self, fname, skip_indices = None, skip_columns = None):
+            if skip_indices is None: skip_indices = []
+            if skip_columns is None: skip_columns = []
             with open(fname, "wb") as f:
                 writer = csv.writer(f)
                 cols_to_save = [x for x in self.column_names if not x in skip_columns]
@@ -145,7 +147,7 @@ class CoordDB:
 
                 for i in range(self.size):
                     if i in skip_indices: continue 
-                    rowdata = [str(i)]
+                    rowdata = []
                     for col in cols_to_save:
                         d = self.data[col][i]
                         if d is not None:
@@ -155,7 +157,9 @@ class CoordDB:
                     writer.writerow(rowdata)
     
 
-    def save_shp(self, fname, projection, skip_indices=[], skip_columns =[]):
+    def save_shp(self, fname, projection, skip_indices=None, skip_columns =None):
+        if skip_indices is None: skip_indices = []
+        if skip_columns is None: skip_columns = []
         driver = ogr.GetDriverByName("ESRI Shapefile")
         if os.path.exists(fname):
            os.remove(fname)
@@ -276,7 +280,7 @@ class CoordDB:
         self.column_names += new_names
 
 
-SHOW_PARSE_EXCEPTIONS = False
+VERBOSITY = 1
 
 def default_value(col):
         if col in INT_FEATURES: return 0
@@ -318,7 +322,7 @@ def parse_file(fname): #if too large, we should store keys in a header
                     current_object[k] = float(v)
                 except:
                     exceptions += 1
-                    if (SHOW_PARSE_EXCEPTIONS):
+                    if (VERBOSITY >= 2):
                         print("parse exception", lineno, k, v)
                     continue
                 if k in INT_FEATURES:
@@ -328,7 +332,7 @@ def parse_file(fname): #if too large, we should store keys in a header
                     current_object[k] = list(map(float, v.split(" ")))
                 except:
                     exceptions += 1
-                    if (SHOW_PARSE_EXCEPTIONS):
+                    if (VERBOSITY>=2):
                         print ("exception: ", lineno,  k, v.split(" "))
                     continue
             else: current_object[k] = v;
@@ -341,8 +345,8 @@ def parse_file(fname): #if too large, we should store keys in a header
     if (len(current_object.keys()) > 1):
         result.append(current_object)
     f.close()
-    if (exceptions > 0):
-        print (str(exceptions) + " parse exceptions. Set xyz.SHOW_PARSE_EXCEPTIONS to True to show each exception")
+    if (exceptions > 0 and VERBOSITY >= 1):
+        print (str(exceptions) + " parse exceptions. Set xyz.VERBOSITY=2 to show each exception")
     return CoordDB(all_cols, result)
 
 

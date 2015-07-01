@@ -294,22 +294,44 @@ def histogram(x, n_bins_max=4):
             maxs[k] = max(xx, maxs[k])
     return [ (mins[a], maxs[a], b) for (a,b) in sorted(counts.iteritems())]
 
+
 #print(histogram([1,2,21,1,11,1,1,2,1,1]))
 
+#import datetime;
+
 #todo: computes fun(db, nn[i]) for each i = 1..size, where nn[i] is the list of points within max_dist from the i-th point
-#def nn_update(colname, fun, max_dist, include_self=True):
-#this: a more primitive version
-def nn_update(db, colname, newcolname, max_dist, include_self=True):
-    #the dumb way
+#set use_squares=False if the neighbour dict does not fit in the memory, or if distance is very large
+def nn_update(db, colname, newcolname, max_dist, include_self=True, use_squares=True):
+    #print ("nn_update")
+    #print(datetime.datetime.now() #about 30 ms for max_dist=100)
+    #slightly better way
     n = db.size
     x = db.data["LONGITUDE"]
     y = db.data["LATITUDE"]
     z = db.data[colname]
     max_dist_sqr = max_dist**2
     result = []
+
+    squares = {}
+
+    if use_squares:
+        for i in range(db.size):
+            cx,cy = int(x[i] * 1.0 / max_dist),int(y[i] * 1.0 / max_dist)
+            for k in range(cx-1,cx+2):
+                for l in range(cy-1, cy+2):
+                    if not (k,l) in squares:
+                        squares[(k,l)] = [i]
+                    else:
+                        squares[(k,l)].append(i)
+
     for i in range(db.size):
         neighbours = []
-        for j in range(db.size):
+        if use_squares:
+            cx,cy = int(x[i] * 1.0 / max_dist),int(y[i] * 1.0 / max_dist)
+            S = squares[(cx,cy)]
+        else:
+            S = range(db.size)
+        for j in S:
             if i == j and not include_self: continue
             d2 = (x[j] - x[i])**2 + (y[j] - y[i])**2
             if d2 < max_dist_sqr:
@@ -317,8 +339,9 @@ def nn_update(db, colname, newcolname, max_dist, include_self=True):
         result.append( sum(z[k] for k in neighbours if z[k] is not None) )
     db.data[newcolname] = result
     db.column_names = [x for x in db.column_names if x != newcolname] + [newcolname]
-    print ("added new column: ", newcolname, db.data[newcolname][:15])
-
+    #print ("added new column: ", newcolname, db.data[newcolname][:15])
+    #print(datetime.datetime.now())
+    #slightly better way
 
 
 

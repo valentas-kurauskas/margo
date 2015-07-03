@@ -33,10 +33,16 @@ class CoordDB:
                 else:
                     self.data[c].append(None)
     
-    def get_copy(self):
-        k = self.data.keys()
+    def get_copy(self, columns = None):
+        if columns is None:
+            columns = self.column_names
+        k = [x for x in self.data.keys() if x in columns]
         v = [[x for x in self.data[kk]] for kk in k]
-        return CoordDB(self.column_names, dict(zip(k,v)), self.meta)
+        return CoordDB(columns, dict(zip(k,v)), self.meta)
+
+    def to_pandas(self):
+        import pandas as pd
+        return pd.DataFrame(self.data, columns=self.column_names)
 
     #slow function to get all points inside a bounding box, returns indices
     def filter_rectangle(self, minx, maxx, miny, maxy, convert_to_wgs=False):

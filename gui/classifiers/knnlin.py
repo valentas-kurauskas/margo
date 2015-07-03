@@ -10,6 +10,7 @@ class KnnLinClassifier(LinearClassifier):
     Run knn classifier, then run a linear classifier on the result.
     Parameters:
     x = data(1, "NEIGHBOURS_GOOD", "KNN_PROB", "ELLIPSE_VERT_MSE"), y = indicator("SCORE"), result = "LR_PROB", k = 10, x_knn = normalized_profile, reuse=False
+    To run with reuse first, make sure both test and train have KNN_PROB defined
     '''
     def __init__(self, 
             #x_getter = lambda r: (1, r["NEIGHBOURS_GOOD"], access(r, "KNN_PROB"), min(r["ELLIPSE_VERT_MSE"], 0.2)), 

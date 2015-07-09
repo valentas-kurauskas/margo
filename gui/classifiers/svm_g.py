@@ -55,10 +55,15 @@ class SVM_GV2 (svm.SVC):
         self.std_scale = preprocessing.StandardScaler().fit(X)
         X = self.std_scale.transform(X)
         svm.SVC.fit(self, X, y)
-        
+       
+
         prob_train = svm.SVC.predict_proba(self, X)
-        prb_train = prob_train.tolist()
-        prb_train = [p[1] for p in prb_train]
+        prediction = svm.SVC.predict(self, X)
+
+        prb_train1 = prob_train[:,1]
+        prb_train = np.maximum(prediction, prb_train1)
+        #prb_train = prob_train.tolist()
+        #prb_train = [p[1] for p in prb_train]
         
         X_up = []
         n = prob_train.shape[0]
@@ -91,9 +96,10 @@ class SVM_GV2 (svm.SVC):
         X_val = self.std_scale.transform(X_val)
         
         prob_val = svm.SVC.predict_proba(self, X_val)
-        prb_val = prob_val.tolist()
-        prb_val = [p[1] for p in prb_val]
-        
+        prediction_val = svm.SVC.predict(self, X_val)
+        prb_val1 = prob_val[:,1]
+        prb_val = np.maximum(prediction_val, prb_val1)
+
         X_val_up = []
         n = prob_val.shape[0]
         for i in range(n):
@@ -109,17 +115,19 @@ class SVM_GV2 (svm.SVC):
             X_val_up.append(vector)
 
         X_val_up = np.array(X_val_up)
-        return self.clf_linear.predict(X_val_up)
+        return np.maximum(self.clf_linear.predict(X_val_up), prediction_val)
 
 
 class SVMClassifier_GV2(CustomizedClassifier):
     #TODO change this!
     '''
     Standard SVM classifier (GŠ). Parameters: x=data("RAW_HEIGHTS"),
-    y=exceeds("SCORE", 0.5), result = "SVM_GV2"
+    y=exceeds("SCORE", 0.5), result = "SVM_GV2.1"
     '''
     #def __init__(self, x=data("RAW_HEIGHTS"), y=exceeds("SCORE", 0.5), result = "SVM_GV2"):
-    def __init__(self, x=lambda z:data("LONGITUDE", "LATITUDE")(z) + data("RAW_HEIGHTS")(z), y=exceeds("SCORE", 0.5), result = "SVM_GV2"):
+    def __init__(self, x=lambda z:data("LONGITUDE", "LATITUDE")(z) +
+                 data("RAW_HEIGHTS")(z), y=exceeds("SCORE", 0.5), result =
+                 "SVM_GV2.1"):
         CustomizedClassifier.__init__(self, x, y, result, SVM_GV2())
 
     def show_stats(self, db):

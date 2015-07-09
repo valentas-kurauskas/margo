@@ -127,7 +127,7 @@
         <item>
          <widget class="QCheckBox" name="checkBox_3">
           <property name="text">
-           <string>Process separately</string>
+           <string>Test separately</string>
           </property>
          </widget>
         </item>

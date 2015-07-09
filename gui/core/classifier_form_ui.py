@@ -133,7 +133,7 @@ class Ui_Dialog(object):
         self.pushButton_3.setText(_translate("Dialog", "Output...", None))
         self.checkBox_2.setText(_translate("Dialog", "Combine results", None))
         self.checkBox.setText(_translate("Dialog", "Save all columns", None))
-        self.checkBox_3.setText(_translate("Dialog", "Process separately", None))
+        self.checkBox_3.setText(_translate("Dialog", "Test separately", None))
         self.comboBox.setItemText(0, _translate("Dialog", "- Select classifier -", None))
         self.pushButton_6.setText(_translate("Dialog", "Close", None))
         self.pushButton_5.setText(_translate("Dialog", "Run", None))

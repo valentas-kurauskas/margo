@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>476</width>
-    <height>659</height>
+    <width>502</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
         <item>
          <widget class="QListWidget" name="listWidget"/>
         </item>
-        <item>
+        <item alignment="Qt::AlignRight">
          <widget class="QPushButton" name="pushButton">
           <property name="minimumSize">
            <size>
@@ -70,7 +70,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item alignment="Qt::AlignRight">
          <widget class="QPushButton" name="pushButton_3">
           <property name="minimumSize">
            <size>
@@ -113,14 +113,21 @@
         <item>
          <widget class="QCheckBox" name="checkBox_2">
           <property name="text">
-           <string>Combine results to one file</string>
+           <string>Combine results</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBox">
           <property name="text">
-           <string>Save data columns</string>
+           <string>Save all columns</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_3">
+          <property name="text">
+           <string>Process separately</string>
           </property>
          </widget>
         </item>

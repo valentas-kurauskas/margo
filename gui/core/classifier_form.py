@@ -78,6 +78,7 @@ class ClassifierDialog(Ui_Dialog):
         #self.lineEdit_2.setText(config.get("last_clf_script"))
         self.checkBox.setChecked(config.get("last_clf_save_data_cols")=="True")
         self.checkBox_2.setChecked(config.get("last_clf_merge_output")=="True")
+        self.checkBox_3.setChecked(config.get("last_clf_process_separately")=="True")
         ind = max(0,self.comboBox.findText(config.get("last_clf_classifier")))
         self.comboBox.setCurrentIndex(ind)
         self.update_clf_script()
@@ -120,28 +121,34 @@ class ClassifierDialog(Ui_Dialog):
             self.current_app.processEvents()
 
 
-    def run1(self, cl, train_items, test_items, output_dir, save_data=True, combine=False, combined_name=None):
+    def run1(self, cl, train_items, test_items_all, output_dir, save_data=True, combine=False, combined_name=None,separately=False):
             cl.show_info = self.appendOutput
             cl.train_files(train_items)
 
-            result = cl.test_files(test_items)
-            self.appendOutput("Statistics:\n")
-            cl.show_stats(result)
+            if not separately: test_items_sets = [test_items_all]
+            else: test_items_sets = [[x] for x in test_items_all]
 
-            if combined_name == None:
-                combined_name = "clf_"+time.strftime("%Y%m%d_%H%M%S")+".xyz"
+            
+            for i,test_items in enumerate(test_items_sets):
+                if separately: self.appendOutput("Testing file {0} of {1}: {2}\n".format(i+1,len(test_items_all),test_items[0]))
+                result = cl.test_files(test_items)
+                #self.appendOutput("Statistics:\n")
+                cl.show_stats(result)
+
+                if combined_name == None:
+                    combined_name = "clf_"+time.strftime("%Y%m%d_%H%M%S")+".xyz"
 
 
-            if save_data and not combine: 
-                cl.reattach_and_save_all(result, output_dir)
-            if save_data and combine: 
-                cl.reattach_combine_and_save_all(result, output_dir, combined_name)
-            if not save_data and combine:
-                path = output_dir + combined_name
-                self.appendOutput("Saving to "+path)
-                result.save_xyz(path)
-            if not save_data and not combine: #do not save data columns and do not combine
-                cl.save_all(result,  output_dir)
+                if save_data and not combine: 
+                    cl.reattach_and_save_all(result, output_dir)
+                if save_data and combine: 
+                    cl.reattach_combine_and_save_all(result, output_dir, combined_name)
+                if not save_data and combine:
+                    path = output_dir + combined_name
+                    self.appendOutput("Saving to "+path)
+                    result.save_xyz(path)
+                if not save_data and not combine: #do not save data columns and do not combine
+                    cl.save_all(result,  output_dir)
 
 
     def run(self):
@@ -154,6 +161,7 @@ class ClassifierDialog(Ui_Dialog):
             #config.set("last_clf_script", self.lineEdit_2.toPlainText())
             config.set("last_clf_save_data_cols", str(self.checkBox.isChecked()))
             config.set("last_clf_merge_output", str(self.checkBox_2.isChecked()))
+            config.set("last_clf_process_separately", str(self.checkBox_3.isChecked()))
             config.set("last_clf_classifier", str(self.comboBox.currentText()))
             config.set("last_clf_script_" + str(self.comboBox.currentText()), self.lineEdit_2.toPlainText())
             self.appendOutput("Run pressed\n")
@@ -171,7 +179,7 @@ class ClassifierDialog(Ui_Dialog):
                             str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
             else: 
                         self.run1(cl, train_items, test_items, 
-                                str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked())
+                                str(self.lineEdit.text())+os.sep, self.checkBox.isChecked(), self.checkBox_2.isChecked(), separately=self.checkBox_3.isChecked())
         except:
             self.appendOutput("Error: " + traceback.format_exc()+"\n")
 

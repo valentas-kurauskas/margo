@@ -8,14 +8,14 @@ from sklearn import linear_model
 
 class LinearClassifier(CustomizedClassifier):
     '''
-    Parameters: x = data("AREA", "HEIGHT"), y = exceeds("SCORE", 0.5), result = "LR_PROB", preprocess_fun = None
+    Parameters: x = data("AREA", "HEIGHT"), y = exceeds("SCORE", 0.5), result = "LR_PROB", preprocess_fun = None, fit_intercept=False
     '''
-    def __init__(self, x= data("AREA", "HEIGHT"), y = exceeds("SCORE", 0.5), result = "LR_PROB", preprocess_fun=None):
+    def __init__(self, x= data("AREA", "HEIGHT"), y = exceeds("SCORE", 0.5), result = "LR_PROB", preprocess_fun=None, fit_intercept=False):
         CustomizedClassifier.__init__(self, 
                 x,  
                 y, 
                 result, 
-                linear_model.LinearRegression(fit_intercept = False), 
+                linear_model.LinearRegression(fit_intercept = fit_intercept), 
                 preprocess_fun = preprocess_fun) 
 
     def show_stats(self, db):

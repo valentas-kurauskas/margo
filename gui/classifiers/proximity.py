@@ -2,9 +2,6 @@ from knnlin import KnnLinClassifier
 from core.classifier import *
 #Knearest neighbours and linear classifier combo
 
-#Count the number of good neighbours and bad neighbours around the point
-#Unfortunately, the weight on bad neighbours is slightly positive
-
 
 class ProximityClassifier(KnnLinClassifier):
     '''

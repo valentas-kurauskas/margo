@@ -3,7 +3,8 @@ import os
 from core import xyz
 
 if len(sys.argv) < 3:
-    print "syntax is: python -m utils.add_score scorefile.xyz file1.xyz file2.xyz .. filen.xyz"
+    print "syntax is: python -m utils.rescore scorefile.xyz file1.xyz file2.xyz .. filen.xyz"
+    exit(1)
 
 
 scores = xyz.load_from_file(sys.argv[1])

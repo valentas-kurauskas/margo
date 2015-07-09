@@ -36,9 +36,18 @@ class CoordDB:
     def get_copy(self, columns = None):
         if columns is None:
             columns = self.column_names
+        columns = [x for x in columns if x in self.data.keys()]
         k = [x for x in self.data.keys() if x in columns]
         v = [[x for x in self.data[kk]] for kk in k]
         return CoordDB(columns, dict(zip(k,v)), self.meta)
+
+    def crop(self,columns=None):
+        if columns is not None:
+            self.column_names = [x for x in self.column_names if x in columns]
+            for k in self.data.keys():
+                if not k in self.column_names:
+                    del self.data[k]
+            
 
     def to_pandas(self):
         import pandas as pd
@@ -63,6 +72,13 @@ class CoordDB:
 
     def get_row_as_dict(self, i):
         return dict(zip(self.column_names, [self.data[x][i] for x in self.column_names]))
+
+    def filter_by_row(self, f):
+        idxs = [i for i in range(self.size) if f(self.get_row_as_dict(i))]
+        newdata = {}
+        for k in self.column_names:
+            newdata[k] = self.get_projection(k,idxs)
+        return CoordDB([x for x in self.column_names], newdata, self.meta)
 
 
     def insert_row(self, rowdict):
@@ -403,8 +419,15 @@ def load_from_file(fname, add_fname = False):
     return result
 
 
-def merge_files(fnames, rename_ids = False, add_fname = False):
+def merge_files(fnames, rename_ids = False, add_fname = False, columns = None, filter=None):
     db = load_from_file(fnames[0], add_fname)
+    if filter is not None:
+        db = db.filter_by_row(filter)
+    if columns is not None: db.crop(columns)
     for f in fnames[1:]:
-        db.union(load_from_file(f, add_fname), rename_ids)
+        db1 = load_from_file(f, add_fname)
+        if filter is not None:
+            db1 = db1.filter_by_row(filter)
+        db1.crop(columns)
+        db.union(db1, rename_ids)
     return db

@@ -80,6 +80,16 @@ class CoordDB:
             newdata[k] = self.get_projection(k,idxs)
         return CoordDB([x for x in self.column_names], newdata, self.meta)
 
+    def insert_column(self, name, values=None, default = None):
+        if values is not None:
+            self.data[name] = values
+        else: self.data[name] = [default] * self.size
+        if not name in self.column_names:
+            self.column_names.append(name)
+
+    def remove_column(self, name):
+        self.column_names.remove(name)
+        self.data.pop(name)
 
     def insert_row(self, rowdict):
         if not "ID" in rowdict:
@@ -224,14 +234,21 @@ class CoordDB:
             feature.Destroy()
         data_source.Destroy()
 
-    def union(self, db, rename_ids = False):
+
+    def union(self, db, rename_ids = False, require_matching_schema = False):
         a = set(self.column_names) - set(db.column_names)
-        a = set.union(a, set(db.column_names) - set(self.column_names))
-        if len(a) > 0:
+        b = set(db.column_names) - set(self.column_names)
+        
+        if require_matching_schema and len(list(a) + list(b)) > 0:
             print ("Inconsistent columns for CoordDB union:", a)
             raise RuntimeError("Inconsistent columns: "+str(a))
+
+        for x in b: self.insert_column(x)
         for x in self.column_names:
-            self.data[x] += db.data[x]
+            if x in a:
+                self.data[x] += [None] * db.size
+            else:
+                self.data[x] += db.data[x]
         self.size += db.size
         if rename_ids:
             self.data["ID"] = range(self.size)
@@ -404,6 +421,7 @@ def load_shp(fname, convert_to_projection=None):
     return CoordDB(names, dict(zip(names,records)))
 
 def load_from_file(fname, add_fname = False):
+    print ("loading: "+fname)
     ext = os.path.splitext(fname)[1]
     if ext == ".shp":
         result = load_shp(fname)

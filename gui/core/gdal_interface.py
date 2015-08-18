@@ -91,12 +91,12 @@ class GdalMap:
             return matrix
 
 
-def plot_matrix(x):
-    #fig = plt.figure()
-    #ax = fig.add_subplot(111, projection='3d')
-    #ax.plot_surface(x,y,z,rstride=1, cstride=1, cmap=cm.jet, shade = True)
-    #plt.show()
-    plt.imshow(ls.shade(x, cm.gist_earth))
+#def plot_matrix(x):
+#    #fig = plt.figure()
+#    #ax = fig.add_subplot(111, projection='3d')
+#    #ax.plot_surface(x,y,z,rstride=1, cstride=1, cmap=cm.jet, shade = True)
+#    #plt.show()
+#    plt.imshow(ls.shade(x, cm.gist_earth))
    
 
 #m = Map(sys.argv[1], load_proj(sys.argv[2]))

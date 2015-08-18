@@ -302,9 +302,7 @@ def histogram(x, n_bins_max=4):
 #todo: computes fun(db, nn[i]) for each i = 1..size, where nn[i] is the list of points within max_dist from the i-th point
 #set use_squares=False if the neighbour dict does not fit in the memory, or if distance is very large
 def nn_update(db, colname, newcolname, max_dist, include_self=True, use_squares=True):
-    #print ("nn_update")
     #print(datetime.datetime.now() #about 30 ms for max_dist=100)
-    #slightly better way
     n = db.size
     x = db.data["LONGITUDE"]
     y = db.data["LATITUDE"]
@@ -339,9 +337,6 @@ def nn_update(db, colname, newcolname, max_dist, include_self=True, use_squares=
         result.append( sum(z[k] for k in neighbours if z[k] is not None) )
     db.data[newcolname] = result
     db.column_names = [x for x in db.column_names if x != newcolname] + [newcolname]
-    #print ("added new column: ", newcolname, db.data[newcolname][:15])
-    #print(datetime.datetime.now())
-    #slightly better way
 
 
 

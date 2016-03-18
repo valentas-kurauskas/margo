@@ -81,6 +81,9 @@ class Classifier(object):
 
     def load_data(self, files, load_y = None, data_loader = parse_file):
         #print ("Loading", str(files), data_loader)
+        if (len(files) == 0): 
+            cn=["LONGITUDE", "LATITUDE", "FNAME", "INDEX", "X"]
+            data = CoordDB(cn, dict( (x,[]) for x in cn))
         for j in range(len(files)):
             new = self.load_file(files[j], data_loader, "Loading file "+str(1+j) + " of "+str(len(files)) + " " + os.path.basename(files[j]) +"\n")
             if load_y and not "Y" in new.data:
@@ -272,6 +275,8 @@ def round2(x):
         return 0.01 * round(x  * 100)
 
 def histogram(x, n_bins_max=4):
+    nans = filter(math.isnan, x)
+    x = filter(lambda z: not math.isnan(z), x)
     n = min(len(set(x)), n_bins_max)
     mx = min(x)
     step = ((max(x) - mx) * 1.0 / n)
@@ -292,7 +297,7 @@ def histogram(x, n_bins_max=4):
             counts[k]+=1
             mins[k] = min(xx, mins[k])
             maxs[k] = max(xx, maxs[k])
-    return [ (mins[a], maxs[a], b) for (a,b) in sorted(counts.iteritems())]
+    return ([] if len(nans) == 0 else [(nans[0], nans[0], len(nans))]) +  [ (mins[a], maxs[a], b) for (a,b) in sorted(counts.iteritems())]
 
 
 #print(histogram([1,2,21,1,11,1,1,2,1,1]))
@@ -407,7 +412,8 @@ class CustomizedClassifier(Classifier):
             pred = [x[1] for x in self.clf.predict_proba(db.data["X"])]
         else:
             pred = self.y_to_1d(self.clf.predict(db.data["X"]))
-        #print (pred[:3], type(pred), type(pred[0]))
+
+        print (self.predict_prob, pred[:3], type(pred), type(pred[0]))
         db.data[self.r_col] = pred
         self.last_result = db
         return db

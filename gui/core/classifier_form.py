@@ -131,6 +131,7 @@ class ClassifierDialog(Ui_Dialog):
             
             for i,test_items in enumerate(test_items_sets):
                 if separately: self.appendOutput("Testing file {0} of {1}: {2}\n".format(i+1,len(test_items_all),test_items[0]))
+                print ("test items sets", i, test_items_sets)
                 result = cl.test_files(test_items)
                 #self.appendOutput("Statistics:\n")
                 cl.show_stats(result)
@@ -168,8 +169,8 @@ class ClassifierDialog(Ui_Dialog):
             cl = eval(str(self.lineEdit_2.toPlainText())) #expects something like ".knn.KnnClassifier()"
 
             cv = False
-            if (set(train_items) == set(test_items)) and len(train_items) > 1:
-                 r = QtGui.QMessageBox.question(self.dialog, "Margo GUI", "Train and test files are the same. Do you want to run cross-validation?", QtGui.QMessageBox.No | QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
+            if (set(train_items) >= set(test_items)) and len(train_items) > 1:
+                 r = QtGui.QMessageBox.question(self.dialog, "Margo GUI", "The train set contains the test set. Do you want to run cross-validation?", QtGui.QMessageBox.No | QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
                  if r == QtGui.QMessageBox.Yes:
                     cv = True
             if cv:

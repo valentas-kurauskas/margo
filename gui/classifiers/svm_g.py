@@ -37,7 +37,7 @@ class SVM_G (svm.SVC):
 
 class SVM_GV2 (svm.SVC):
     def __init__(self):
-        svm.SVC.__init__(self, C=1, gamma=0.0, probability=True)
+        svm.SVC.__init__(self, C=3.36358566101, gamma=0.015626, probability=True)
         max_dist = 100
         self.dist = max_dist**2
         self.std_scale = None

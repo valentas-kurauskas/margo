@@ -11,7 +11,8 @@ from sklearn import preprocessing
 class SVM_G (svm.SVC):
     def __init__(self, enhanced = False):
         self.enhanced = enhanced
-        svm.SVC.__init__(self, C=1, gamma=0.05)
+        #svm.SVC
+        super(SVM_G, self).__init__(C=1, gamma=0.05)
 
     def fit(self, X_train, y_train):
         X_train = np.array(X_train)
@@ -28,16 +29,18 @@ class SVM_G (svm.SVC):
 
         self.std_scale = preprocessing.StandardScaler().fit(X_tr)
         X_tr = self.std_scale.transform(X_tr)
-        return svm.SVC.fit(self,X_tr, y_tr)
+        #return svm.SVC.fit(self,X_tr, y_tr)
+        return super(SVM_G, self).fit(X_tr, y_tr)
 
     def predict(self, X_test):
         X_test = np.array(X_test)
         X_test = self.std_scale.transform(X_test)
-        return svm.SVC.predict(self,X_test)
+        return super(SVM_G, self).predict(X_test)
 
 class SVM_GV2 (svm.SVC):
     def __init__(self):
-        svm.SVC.__init__(self, C=3.36358566101, gamma=0.015626, probability=True)
+        #svm.SVC
+        super(SVM_GV2, self).__init__(C=3.36358566101, gamma=0.015626, probability=True)
         max_dist = 100
         self.dist = max_dist**2
         self.std_scale = None
@@ -54,11 +57,14 @@ class SVM_GV2 (svm.SVC):
         
         self.std_scale = preprocessing.StandardScaler().fit(X)
         X = self.std_scale.transform(X)
-        svm.SVC.fit(self, X, y)
+        #svm.SVC
+        super(SVM_GV2, self).fit(X, y)
        
 
-        prob_train = svm.SVC.predict_proba(self, X)
-        prediction = svm.SVC.predict(self, X)
+        #prob_train = svm.SVC.predict_proba(self, X)
+        prob_train = super(SVM_GV2, self).predict_proba(X)
+        #prediction = svm.SVC.predict(self, X)
+        prediction = super(SVM_GV2, self).predict(X)
 
         prb_train1 = prob_train[:,1]
         prb_train = np.maximum(prediction, prb_train1)
@@ -95,8 +101,10 @@ class SVM_GV2 (svm.SVC):
         X_val = np.array(X_val)
         X_val = self.std_scale.transform(X_val)
         
-        prob_val = svm.SVC.predict_proba(self, X_val)
-        prediction_val = svm.SVC.predict(self, X_val)
+        #prob_val = svm.SVC.predict_proba(self, X_val)
+        prob_val = super(SVM_GV2, self).predict_proba(X_val)
+        #prediction_val = svm.SVC.predict(self, X_val)
+        prediction_val = super(SVM_GV2, self).predict(X_val)
         prb_val1 = prob_val[:,1]
         prb_val = np.maximum(prediction_val, prb_val1)
 

@@ -120,7 +120,8 @@ class ClassifierDialog(Ui_Dialog):
         if self.current_app is not None:
             self.current_app.processEvents()
 
-
+    
+#TODO: combine does not work?
     def run1(self, cl, train_items, test_items_all, output_dir, save_data=True, combine=False, combined_name=None,separately=False):
             cl.show_info = self.appendOutput
             cl.train_files(train_items)

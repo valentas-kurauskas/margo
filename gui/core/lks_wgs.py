@@ -1,5 +1,5 @@
+#coding: utf-8
 import math
-# coding: utf-8
 #konversija iš excel failo
 #http://www.geocad.lt/lt/excel-skaiciuokles/7-coordinate-conversion-lks-94-to-wgs-84
 #baisesnio užrašo nesu matęs :)

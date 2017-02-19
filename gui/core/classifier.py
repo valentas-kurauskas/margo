@@ -98,6 +98,8 @@ class Classifier(object):
             else:
                 data.union(new)
         data.meta = {"files": files} 
+        if 1 < len(set([len(x) for x in data.data["X"]])):
+            self.show_info("Warning: X lengths are different. Possible error with data or x parameter") 
         self.last_result = data
         return self.last_result
 

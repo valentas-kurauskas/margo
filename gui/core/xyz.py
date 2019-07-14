@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from lks_wgs import lks94_to_wgs
+from .lks_wgs import lks94_to_wgs
 from osgeo import ogr,osr
 import os
 import csv
@@ -21,7 +21,7 @@ class CoordDB:
 
         if type(data) == dict: #dict of lists also accepted
             self.data = data
-            self.size = len(data.values()[0]) if len(data) > 0 else 0
+            self.size = len(list(data.values())[0]) if len(data) > 0 else 0
             return
 
         self.size = len(data)
@@ -29,7 +29,7 @@ class CoordDB:
             self.data[nm] = []
         for element in data:
             for c in column_names:
-                if c in element.keys():
+                if c in list(element.keys()):
                     self.data[c].append(element[c])
                 else:
                     self.data[c].append(None)
@@ -37,15 +37,15 @@ class CoordDB:
     def get_copy(self, columns = None):
         if columns is None:
             columns = self.column_names
-        columns = [x for x in columns if x in self.data.keys()]
-        k = [x for x in self.data.keys() if x in columns]
+        columns = [x for x in columns if x in list(self.data.keys())]
+        k = [x for x in list(self.data.keys()) if x in columns]
         v = [[x for x in self.data[kk]] for kk in k]
         return CoordDB(columns, dict(zip(k,v)), self.meta)
 
     def crop(self,columns=None):
         if columns is not None:
             self.column_names = [x for x in self.column_names if x in columns]
-            for k in self.data.keys():
+            for k in list(self.data.keys()):
                 if not k in self.column_names:
                     del self.data[k]
             
@@ -107,7 +107,7 @@ class CoordDB:
     def get_item(self, i, j):
         if type(j) == type(0):
             j = self.column_names[j]
-        if (not (j in self.data.keys())):
+        if (not (j in list(self.data.keys()))):
             return None
         return self.data[j][i]
 
@@ -134,7 +134,7 @@ class CoordDB:
         return [x[1] for x in ds[:m]]
 
     def save_xyz(self, fname, skip_indices = [], skip_columns = []):
-        print ("saving table: ",fname)
+        print(("saving table: ",fname))
         f = open(fname, "w")
         for i in range(self.size):
             if i in skip_indices: continue
@@ -241,7 +241,7 @@ class CoordDB:
         b = set(db.column_names) - set(self.column_names)
         
         if require_matching_schema and len(list(a) + list(b)) > 0:
-            print ("Inconsistent columns for CoordDB union:", a)
+            print(("Inconsistent columns for CoordDB union:", a))
             raise RuntimeError("Inconsistent columns: "+str(a))
 
         for x in b: self.insert_column(x)
@@ -277,7 +277,7 @@ class CoordDB:
 
     def join_neighbours(self, db, cols, cols_to_add =None, radius = 10): 
         radius = radius
-        print "Joining with radius: "+str(radius)
+        print("Joining with radius: "+str(radius))
         #to do: use projection info.
         binx = [ int(x * 2.0 /radius) for x in self.data['LONGITUDE']]
         biny = [ int(y * 2.0 /radius) for y in self.data['LATITUDE']]
@@ -343,7 +343,7 @@ def parse_file(fname): #if too large, we should store keys in a header
             break
         lineno+=1
         if ( (line == "\r\n") or (line == "\n") ):
-            if ( len(current_object.keys()) !=1):
+            if ( len(list(current_object.keys())) !=1):
                 result.append(current_object)
                 #print "append"
             current_object = {'ID': len(result)}
@@ -363,7 +363,7 @@ def parse_file(fname): #if too large, we should store keys in a header
                 except:
                     exceptions += 1
                     if (VERBOSITY >= 2):
-                        print("parse exception", lineno, k, v)
+                        print(("parse exception", lineno, k, v))
                     continue
                 if k in INT_FEATURES:
                     current_object[k] = int(current_object[k])
@@ -373,7 +373,7 @@ def parse_file(fname): #if too large, we should store keys in a header
                 except:
                     exceptions += 1
                     if (VERBOSITY>=2):
-                        print ("exception: ", lineno,  k, v.split(" "))
+                        print(("exception: ", lineno,  k, v.split(" ")))
                     continue
             else: current_object[k] = v;
         else:
@@ -382,11 +382,11 @@ def parse_file(fname): #if too large, we should store keys in a header
                 current_object["LONGITUDE"] = float(words[0])
                 current_object["LATITUDE"] = float(words[1])
         #print "read"
-    if (len(current_object.keys()) > 1):
+    if (len(list(current_object.keys())) > 1):
         result.append(current_object)
     f.close()
     if (exceptions > 0 and VERBOSITY >= 1):
-        print (str(exceptions) + " parse exceptions. Set xyz.VERBOSITY=2 to show each exception")
+        print((str(exceptions) + " parse exceptions. Set xyz.VERBOSITY=2 to show each exception"))
     return CoordDB(all_cols, result)
 
 
@@ -412,7 +412,7 @@ def load_shp(fname, convert_to_projection=None):
         if trans is not None:
             geom.Transform(trans)
         pt = geom.GetPoint()
-        items = feat.items()
+        items = list(feat.items())
         if not "ID" in items:
             items["ID"] = i
         record = list(pt[:2]) + [items[k] for k in field_names]
@@ -422,7 +422,7 @@ def load_shp(fname, convert_to_projection=None):
     return CoordDB(names, dict(zip(names,records)))
 
 def load_from_file(fname, add_fname = False):
-    print ("loading: "+fname)
+    print(("loading: "+fname))
     ext = os.path.splitext(fname)[1]
     if ext == ".shp":
         result = load_shp(fname)

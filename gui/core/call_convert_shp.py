@@ -1,11 +1,11 @@
-from PyQt4 import QtGui, Qt, QtCore
-import config
+from PyQt5 import QtGui, Qt, QtCore, QtWidgets
+from . import config
 #import subprocess
 import os
 #import StringIO
 #import traceback
 
-class ConvertSHPWindow(QtGui.QDialog):
+class ConvertSHPWindow(QtWidgets.QDialog):
     def __init__(self):
         super(ConvertSHPWindow, self).__init__() 
         self.initUI()
@@ -18,21 +18,21 @@ class ConvertSHPWindow(QtGui.QDialog):
         #self.ticker.start(1000)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowMinimizeButtonHint)
 
-        self.inputEdit = QtGui.QLineEdit(config.get("convert_shp_last_hfz"))
-        self.shpEdit = QtGui.QLineEdit(config.get("convert_shp_last_shp"))
-        #self.locationEdit = QtGui.QLineEdit(config.get("margo_location"))
-        #self.maskEdit = QtGui.QLineEdit(config.get("last_convert_shp_mask_dir"))
-        self.maskEdit = QtGui.QLineEdit(config.get("convert_shp_last_dir"))
+        self.inputEdit = QtWidgets.QLineEdit(config.get("convert_shp_last_hfz"))
+        self.shpEdit = QtWidgets.QLineEdit(config.get("convert_shp_last_shp"))
+        #self.locationEdit = QtWidgets.QLineEdit(config.get("margo_location"))
+        #self.maskEdit = QtWidgets.QLineEdit(config.get("last_convert_shp_mask_dir"))
+        self.maskEdit = QtWidgets.QLineEdit(config.get("convert_shp_last_dir"))
 
-        inputButton = QtGui.QPushButton("Browse")
-        shpButton = QtGui.QPushButton("Browse")
-        #locationButton = QtGui.QPushButton("Browse")
-        maskButton = QtGui.QPushButton("Browse")
-        self.checkBox = QtGui.QCheckBox("Cut exact polygon")
+        inputButton = QtWidgets.QPushButton("Browse")
+        shpButton = QtWidgets.QPushButton("Browse")
+        #locationButton = QtWidgets.QPushButton("Browse")
+        maskButton = QtWidgets.QPushButton("Browse")
+        self.checkBox = QtWidgets.QCheckBox("Cut exact polygon")
         self.checkBox.setChecked(config.get("convert_shp_polygon") == 'True')
-        #outputButton = QtGui.QPushButton("Browse")
-        runButton = QtGui.QPushButton("Run")
-        #killButton = QtGui.QPushButton("Stop")
+        #outputButton = QtWidgets.QPushButton("Browse")
+        runButton = QtWidgets.QPushButton("Run")
+        #killButton = QtWidgets.QPushButton("Stop")
         inputButton.clicked.connect(self.showInputDialog)
         shpButton.clicked.connect(self.showShpInputDialog)
         #locationButton.clicked.connect(self.showLocationDialog)
@@ -43,13 +43,13 @@ class ConvertSHPWindow(QtGui.QDialog):
         self.runButton = runButton
         #self.killButton = killButton
 
-        layout = QtGui.QGridLayout()
+        layout = QtWidgets.QGridLayout()
 
 
 
-        layout.addWidget(QtGui.QLabel('HFZ input dir:'), 0, 0)
-        layout.addWidget(QtGui.QLabel('SHP input file:'), 1, 0)
-        layout.addWidget(QtGui.QLabel('Output directory:'),2,0)
+        layout.addWidget(QtWidgets.QLabel('HFZ input dir:'), 0, 0)
+        layout.addWidget(QtWidgets.QLabel('SHP input file:'), 1, 0)
+        layout.addWidget(QtWidgets.QLabel('Output directory:'),2,0)
         #layout.addWidget(QtGui.QLabel('Output directory:'),3,0)
         #layout.addWidget(QtGui.QLabel('Other parameters:'),4,0)
 
@@ -65,7 +65,7 @@ class ConvertSHPWindow(QtGui.QDialog):
         #layout.addWidget(self.outputEdit,3,1)
 
         #hsplit.addWidget(self.paramsEdit) 
-        self.outputbox = QtGui.QPlainTextEdit() #QtGui.QLabel()
+        self.outputbox = QtWidgets.QPlainTextEdit() #QtGui.QLabel()
         self.outputbox.setReadOnly(True)
         layout.addWidget(self.outputbox, 4, 1,2,2)
 
@@ -85,14 +85,14 @@ class ConvertSHPWindow(QtGui.QDialog):
     def update_output(self):
         s = self.process.readAllStandardOutput()
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
-        self.outputbox.insertPlainText(QtCore.QString(s))
+        self.outputbox.insertPlainText(s)
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
         print(s)
 
     def update_error(self):
         s = self.process.readAllStandardError()
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
-        self.outputbox.insertPlainText(QtCore.QString(s))
+        self.outputbox.insertPlainText(s)
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
         print(s)
 
@@ -105,7 +105,7 @@ class ConvertSHPWindow(QtGui.QDialog):
     def showInputDialog(self):
         inp = str(self.inputEdit.text())
         #s = QtGui.QFileDialog.getOpenFileName(self, 'Open file', inp, "*.hfz")
-        s = QtGui.QFileDialog.getExistingDirectory(self, 'Open directory', inp)
+        s = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open directory', inp)
         if len(s) == 0: return
         #s = [str(x) for x in s]
         self.inputEdit.setText(s)
@@ -113,13 +113,13 @@ class ConvertSHPWindow(QtGui.QDialog):
     def showShpInputDialog(self):
         inp = str(self.shpEdit.text()).split(";")
         inp = inp[0] if len(inp) > 0 else ""
-        s = QtGui.QFileDialog.getOpenFileName(self, 'Open file', inp, "*.shp")
+        s,_ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', inp, "*.shp")
         if len(s) == 0: return
         #s = [str(x) for x in s]
         self.shpEdit.setText(s)
 
     def showMaskDialog(self):
-        s = QtGui.QFileDialog.getExistingDirectory(self, 'Open directory', self.maskEdit.text())
+        s = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open directory', self.maskEdit.text())
         if s == "": return
         self.maskEdit.setText(s)
 

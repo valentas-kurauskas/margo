@@ -1,11 +1,11 @@
-from PyQt4 import QtGui, Qt, QtCore
-import config
+from PyQt5 import QtGui, Qt, QtCore, QtWidgets
+from . import config
 #import subprocess
 import os
 #import StringIO
 #import traceback
 
-class MargoWindow(QtGui.QDialog):
+class MargoWindow(QtWidgets.QDialog):
     def __init__(self):
         super(MargoWindow, self).__init__() 
         self.initUI()
@@ -18,19 +18,19 @@ class MargoWindow(QtGui.QDialog):
         #self.ticker.start(1000)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowMinimizeButtonHint)
 
-        self.inputEdit = QtGui.QLineEdit(";".join(config.get_multiline("last_hfz_input")))
-        self.locationEdit = QtGui.QLineEdit(config.get("margo_location"))
-        self.maskEdit = QtGui.QLineEdit(config.get("margo_mask_dir"))
-        self.outputEdit = QtGui.QLineEdit(config.get("margo_output_dir"))
-        self.paramsEdit = QtGui.QTextEdit()
+        self.inputEdit = QtWidgets.QLineEdit(";".join(config.get_multiline("last_hfz_input")))
+        self.locationEdit = QtWidgets.QLineEdit(config.get("margo_location"))
+        self.maskEdit = QtWidgets.QLineEdit(config.get("margo_mask_dir"))
+        self.outputEdit = QtWidgets.QLineEdit(config.get("margo_output_dir"))
+        self.paramsEdit = QtWidgets.QTextEdit()
         self.paramsEdit.setText(config.get("margo_params"))
 
-        inputButton = QtGui.QPushButton("Browse")
-        locationButton = QtGui.QPushButton("Browse")
-        maskButton = QtGui.QPushButton("Browse")
-        outputButton = QtGui.QPushButton("Browse")
-        runButton = QtGui.QPushButton("Run")
-        killButton = QtGui.QPushButton("Stop")
+        inputButton = QtWidgets.QPushButton("Browse")
+        locationButton = QtWidgets.QPushButton("Browse")
+        maskButton = QtWidgets.QPushButton("Browse")
+        outputButton = QtWidgets.QPushButton("Browse")
+        runButton = QtWidgets.QPushButton("Run")
+        killButton = QtWidgets.QPushButton("Stop")
         inputButton.clicked.connect(self.showInputDialog)
         locationButton.clicked.connect(self.showLocationDialog)
         maskButton.clicked.connect(self.showMaskDialog)
@@ -40,28 +40,28 @@ class MargoWindow(QtGui.QDialog):
         self.runButton = runButton
         self.killButton = killButton
 
-        layout = QtGui.QGridLayout()
+        layout = QtWidgets.QGridLayout()
 
 
 
-        layout.addWidget(QtGui.QLabel('Input files:'), 0, 0)
-        layout.addWidget(QtGui.QLabel('Program location:'), 1, 0)
-        layout.addWidget(QtGui.QLabel('Mask directory:'),2,0)
-        layout.addWidget(QtGui.QLabel('Output directory:'),3,0)
-        layout.addWidget(QtGui.QLabel('Other parameters:'),4,0)
+        layout.addWidget(QtWidgets.QLabel('Input files:'), 0, 0)
+        layout.addWidget(QtWidgets.QLabel('Program location:'), 1, 0)
+        layout.addWidget(QtWidgets.QLabel('Mask directory:'),2,0)
+        layout.addWidget(QtWidgets.QLabel('Output directory:'),3,0)
+        layout.addWidget(QtWidgets.QLabel('Other parameters:'),4,0)
 
         layout.addWidget(self.inputEdit,0,1)
         layout.addWidget(self.locationEdit,1,1)
         layout.addWidget(self.maskEdit,2,1)
 
 
-        hsplit = QtGui.QSplitter()
+        hsplit = QtWidgets.QSplitter()
         hsplit.setOrientation(Qt.Qt.Vertical)
         
         layout.addWidget(self.outputEdit,3,1)
 
         hsplit.addWidget(self.paramsEdit) 
-        self.outputbox = QtGui.QPlainTextEdit() #QtGui.QLabel()
+        self.outputbox = QtWidgets.QPlainTextEdit() #QtWidgets.QLabel()
         self.outputbox.setReadOnly(True)
         hsplit.addWidget(self.outputbox)
         layout.addWidget(hsplit, 4, 1, 3, 2)
@@ -81,14 +81,15 @@ class MargoWindow(QtGui.QDialog):
     def update_output(self):
         s = self.process.readAllStandardOutput()
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
-        self.outputbox.insertPlainText(QtCore.QString(s))
+        self.outputbox.insertPlainText(s.data().decode("utf-8"))
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
         print(s)
+        print("decode", s.data().decode("utf-8"))
 
     def update_error(self):
         s = self.process.readAllStandardError()
         self.outputbox.moveCursor(QtGui.QTextCursor.End)
-        self.outputbox.insertPlainText(QtCore.QString(s))
+        self.outputbox.insertPlainText(s.data().decode("utf-8"))
         print(s)
 
     #    try:
@@ -100,23 +101,23 @@ class MargoWindow(QtGui.QDialog):
     def showInputDialog(self):
         inp = str(self.inputEdit.text()).split(";")
         inp = inp[0] if len(inp) > 0 else ""
-        s = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', inp, "*.hfz")
+        s,_ = QtWidgets.QFileDialog.getOpenFileNames(self, 'Open file', inp, "*.hfz")
         if len(s) == 0: return
         s = [str(x) for x in s]
         self.inputEdit.setText(";".join(s))
 
     def showLocationDialog(self):
-        s = QtGui.QFileDialog.getOpenFileName(self, 'Open file', self.locationEdit.text())
+        s,_ = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', self.locationEdit.text())
         if s == "": return
         self.locationEdit.setText(s)
 
     def showOutputDialog(self):
-        s = QtGui.QFileDialog.getExistingDirectory(self, 'Open directory', self.outputEdit.text())
+        s = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open directory', self.outputEdit.text())
         if s == "": return
         self.outputEdit.setText(s)
 
     def showMaskDialog(self):
-        s = QtGui.QFileDialog.getExistingDirectory(self, 'Open directory', self.maskEdit.text())
+        s = QtWidgets.QFileDialog.getExistingDirectory(self, 'Open directory', self.maskEdit.text())
         if s == "": return
         self.maskEdit.setText(s)
 
@@ -127,7 +128,7 @@ class MargoWindow(QtGui.QDialog):
             self.runButton.setEnabled(True)
             return
 
-    processing_finished = QtCore.pyqtSignal(QtCore.QString)
+    processing_finished = QtCore.pyqtSignal(str)
 
     def next_job(self):
         self.executing = True
@@ -143,7 +144,7 @@ class MargoWindow(QtGui.QDialog):
             #print idx
             if idx > 0 and idx > text.rfind("FAILED"):
                 text = text[idx + 7:text.rfind(".xyz")+4]
-                print text
+                print(text)
                 self.processing_finished.emit(text)
             return;
         self.runButton.setEnabled(False)
@@ -158,7 +159,7 @@ class MargoWindow(QtGui.QDialog):
         self.process.readyReadStandardOutput.connect(self.update_output)
         self.process.readyReadStandardError.connect(self.update_error)
         self.process.error.connect(self.process_fail)
-        #result = process.startDetached(self.current_command, [x] + self.current_args)
+        #print([repr(z) for z in [x] + self.current_args])
         self.process.start(self.current_command, [x] + self.current_args)
 
 
@@ -184,6 +185,7 @@ class MargoWindow(QtGui.QDialog):
         inputs = str(self.inputEdit.text()).split(";")
         ppath = str(self.locationEdit.text())
         pars = config.get("margo_params").split("\n")
+        pars = [x for x in pars if x != '']
         mask_dir = str(self.maskEdit.text())
         output_dir = str(self.outputEdit.text())
 

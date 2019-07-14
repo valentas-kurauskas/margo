@@ -1,28 +1,28 @@
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 #from matplotlib.backends.backend_qt4 import FigureCanvasQT as FigureCanvas
 #from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
 
 import matplotlib.pyplot as plt
-from PyQt4 import QtGui, Qt, QtCore
+from PyQt5 import QtGui, Qt, QtCore, QtWidgets
 #import os
-import gdal_interface
+from . import gdal_interface
 from matplotlib.colors import LightSource
 from matplotlib import cm
-import config
+from . import config
 import time
 import numpy as np
 from matplotlib.widgets import RectangleSelector
 
 
-class SurfaceBrowser(QtGui.QWidget):
+class SurfaceBrowser(QtWidgets.QWidget):
 
     def __init__(self, source):
-        QtGui.QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
 
         self.source = source
 
-        splitter = QtGui.QSplitter(Qt.Qt.Vertical, self)
+        splitter = QtWidgets.QSplitter(Qt.Qt.Vertical, self)
         
         self.figure = plt.figure(frameon = False) #(3)?
         self.figure.add_axes([0,0,1,1])
@@ -34,8 +34,8 @@ class SurfaceBrowser(QtGui.QWidget):
         self.canvas.mpl_connect("button_press_event", self.mouse_press)
         self.canvas.mpl_connect("resize_event", lambda x: self.replot(center_at_cr = False, autozoom=True))
 
-        self.canvasMenu = QtGui.QMenu(self)
-        ca = QtGui.QAction('Insert a non-detection here', self)
+        self.canvasMenu = QtWidgets.QMenu(self)
+        ca = QtWidgets.QAction('Insert a non-detection here', self)
         ca.triggered.connect(self.insert_nondetection)
         self.canvasMenu.addAction(ca)
 
@@ -64,13 +64,13 @@ class SurfaceBrowser(QtGui.QWidget):
         self.last_top_left = None
         self.last_bottom_right = None
 
-        self.size_slider = QtGui.QSpinBox () # (Qt.Qt.Horizontal)
+        self.size_slider = QtWidgets.QSpinBox () # (Qt.Qt.Horizontal)
         self.size_slider.setMinimum(5)
         self.size_slider.setMaximum(1000)
         self.size_slider.setSingleStep(10)
         self.size_slider.setSuffix("px")
         
-        self.altitude_slider = QtGui.QDial()
+        self.altitude_slider = QtWidgets.QDial()
         self.altitude_slider.valueChanged.connect(self.altitude_slider_change)
         self.altitude_slider.setMinimum(0)
         self.altitude_slider.setMaximum(360)
@@ -81,12 +81,12 @@ class SurfaceBrowser(QtGui.QWidget):
         except:
             self.altitude_slider.setValue( (-30 - 90) % 360 )
 
-        self.angle_slider = QtGui.QDial() #QSlider(Qt.Qt.Vertical)
+        self.angle_slider = QtWidgets.QDial() #QSlider(Qt.Qt.Vertical)
         self.angle_slider.setWrapping(True)
         self.angle_slider.setMinimum(0)
         self.angle_slider.setMaximum(360)
 
-        self.angle_label = QtGui.QLabel("Azimuth")
+        self.angle_label = QtWidgets.QLabel("Azimuth")
         #self.angle_label.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         #self.angle_label.setStyleSheet("QLabel { background-color : red; color : blue; }");
 
@@ -114,7 +114,7 @@ class SurfaceBrowser(QtGui.QWidget):
         #layout = QtGui.QHBoxLayout()
         #layout.addWidget()
         #hsplit.setOrientation(Qt.Qt.Vertical)
-        clayout = QtGui.QHBoxLayout()
+        clayout = QtWidgets.QHBoxLayout()
         
         
         self.nav = NavigationToolbar(self.canvas, self, coordinates = False)
@@ -122,7 +122,7 @@ class SurfaceBrowser(QtGui.QWidget):
         a.setToolTip('Turn off pan/zoom')
         #self.nav.configure_subplots.setVisible(False)
         #self.nav.save_figure.setVisible(False)
-        for i,x in enumerate(self.nav.findChildren(QtGui.QAction)):
+        for i,x in enumerate(self.nav.findChildren(QtWidgets.QAction)):
             #print i,x
             if x.text() in ['Subplots', 'Save', 'Customize', 'Back', 'Forward']:
                 x.setVisible(False)
@@ -131,19 +131,19 @@ class SurfaceBrowser(QtGui.QWidget):
         #self.nav.setMaximumWidth(200)
         clayout.addWidget(self.nav, 0, QtCore.Qt.AlignLeft)
         clayout.setAlignment(QtCore.Qt.AlignLeft)
-        clayout.addItem(QtGui.QSpacerItem(20,20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
+        clayout.addItem(QtWidgets.QSpacerItem(20,20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding))
 
-        clayout2 = QtGui.QHBoxLayout()
+        clayout2 = QtWidgets.QHBoxLayout()
 
         #clayout2.setAlignment(QtCore.Qt.AlignLeft)
 
 
-        clayout2.addWidget(QtGui.QLabel("Area"))
+        clayout2.addWidget(QtWidgets.QLabel("Area"))
         clayout2.addWidget(self.size_slider)
          #clayout.addWidget(QtGui.QLabel("Light source control"))
         s = str((- self.angle_slider.value()) % 360)
         #clayout_ang = QtGui.QHBoxLayout()
-        clayout2.addWidget(QtGui.QLabel("Altitude"))
+        clayout2.addWidget(QtWidgets.QLabel("Altitude"))
         clayout2.addWidget(self.altitude_slider)
 
         clayout2.addWidget(self.angle_label)
@@ -152,12 +152,12 @@ class SurfaceBrowser(QtGui.QWidget):
         clayout2.setContentsMargins(0,0,0,0)
         clayout.addLayout(clayout2)
      
-        w = QtGui.QWidget() #QGroupBox("Raster parameters")
+        w = QtWidgets.QWidget() #QGroupBox("Raster parameters")
         w.setLayout(clayout)
         splitter.addWidget(w)
         splitter.addWidget(self.canvas)
         
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         layout.addWidget(splitter)
         clayout.setContentsMargins(0,0,0,0)
@@ -169,7 +169,7 @@ class SurfaceBrowser(QtGui.QWidget):
     def rectangle_selected(self, eclick, erelease):
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
-        print ("rectangle", x1, y1, x2,y2)
+        print(("rectangle", x1, y1, x2,y2))
         rows = self.source.db().filter_rectangle(min(x1,x2), max(x1,x2), min(y1,y2), max(y1,y2))
         self.source.select_rows(rows)
 
@@ -177,7 +177,7 @@ class SurfaceBrowser(QtGui.QWidget):
         if self.nav._active == 'PAN': self.nav.pan()
         if self.nav._active == 'ZOOM': self.nav.zoom()
 
-    status_changed = QtCore.pyqtSignal(QtCore.QString)
+    status_changed = QtCore.pyqtSignal(str)
     point_selected = QtCore.pyqtSignal(int)
     point_inserted = QtCore.pyqtSignal(float,float)
 
@@ -308,7 +308,7 @@ class SurfaceBrowser(QtGui.QWidget):
         self.raster = gdal_interface.GdalMap(filename)
 
     def set_projection(self, filename):
-        print ("Setting projection: "+filename)
+        print(("Setting projection: "+filename))
         if filename == "":
             return
         if self.raster is not None:
@@ -348,8 +348,11 @@ class SurfaceBrowser(QtGui.QWidget):
             return
         
         if autozoom:
-            self.nav._views.clear()
-            self.nav._positions.clear()
+            try:
+                self.nav._views.clear()
+                self.nav._positions.clear()
+            except:
+                print ("failed to clear views")
 
         #print ("plot_area", top_left0, bottom_right0)
         
@@ -365,7 +368,7 @@ class SurfaceBrowser(QtGui.QWidget):
             #ax.set_aspect("equal", "datalim")
             r = self.raster.get_rectangle(top_left, bottom_right)
             if len(r) == 0: 
-                print "No raster at this point"
+                print("No raster at this point")
                 return
             #print (r.max(), r.min())
             r= np.ma.array(r, mask= (r<-9999)) #mask
@@ -434,9 +437,9 @@ class SurfaceBrowser(QtGui.QWidget):
 
         rrows = range(len(rows))
         self.last_plotted_rows = rows
-        rselected = filter(lambda x: (rows[x] in selected) and (not rows[x] in current), rrows)
-        rsimple = filter(lambda x: (not rows[x] in current) and (not rows[x] in selected), rrows)
-        rcurrent = filter(lambda x: rows[x] in current, rrows)
+        rselected = list(filter(lambda x: (rows[x] in selected) and (not rows[x] in current), rrows))
+        rsimple = list(filter(lambda x: (not rows[x] in current) and (not rows[x] in selected), rrows))
+        rcurrent = list(filter(lambda x: rows[x] in current, rrows))
 
 
         x_cur = [x_tr[i] for i in rcurrent]

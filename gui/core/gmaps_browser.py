@@ -1,6 +1,7 @@
 
-from PyQt4.QtWebKit import QWebView
-from PyQt4.QtCore import QObject, pyqtSlot
+#from PyQt5.QtWebKit import QWebView
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtCore import QObject, pyqtSlot
 import os
 
 
@@ -23,10 +24,10 @@ f.close()
 #        return 0
 
 
-class GMapsBrowser(QWebView):
+class GMapsBrowser(QWebEngineView):
 
     def __init__(self):
-        QWebView.__init__(self)
+        QWebEngineView.__init__(self)
 
         #self.settings().setMaximumPagesInCache(0)
         #self.settings().setObjectCacheCapacities(0, 0, 0)
@@ -47,7 +48,7 @@ class GMapsBrowser(QWebView):
         if self.last_marked is not None:
             line = "markers["+str(self.last_marked) +"].setIcon("+self.unselected_icon_str+")"
             #print line
-            self.page().mainFrame().evaluateJavaScript(line)
+            self.page().runJavaScript(line)
         if internal:
             newid = ID
         elif ID in self.last_id_list:
@@ -57,7 +58,7 @@ class GMapsBrowser(QWebView):
             return
         line = "markers["+str(newid) +"].setIcon("+self.current_icon_str +")"
         #print line
-        self.page().mainFrame().evaluateJavaScript(line)
+        self.page().runJavaScript(line)
         self.last_marked = newid
 
     def update_selection(self, IDS, internal = False):
@@ -65,7 +66,7 @@ class GMapsBrowser(QWebView):
         if self.last_selection is not None:
             for i in self.last_selection:
                 line = "markers["+str(i) +"].setIcon("+self.unselected_icon_str+")"
-                self.page().mainFrame().evaluateJavaScript(line)
+                self.page().runJavaScript(line)
         #print ("update selection", IDS)
         if IDS is None:
             return
@@ -75,18 +76,22 @@ class GMapsBrowser(QWebView):
             newsel = [self.last_id_list.index(i) for i in IDS if i in self.last_id_list]
         for i in newsel:
             line = "markers["+str(i) +"].setIcon("+self.selected_icon_str +")"
-            self.page().mainFrame().evaluateJavaScript(line)
+            self.page().runJavaScript(line)
         self.last_selection = newsel
 
+    def _html(self, x):
+        print("result2", len(x))
 
     def _result_available(self, ok):
         #self.count += 1
         #if (self.count % 2 == 1):
         #    return
-        frame = self.page().mainFrame()
-        print ("result", len(frame.toHtml()))
+        #frame = self.page().mainFrame()
+        frame = self.page()
+        #print(("result", len(frame.toHtml())))
+        frame.toHtml(self._html)
         #print(frame.toHtml())
-        print("result", ok)
+        #print(("result", ok))
         self.update_selection(self.last_selection, True)
         self.mark_selected(self.last_marked, True)
 
@@ -105,7 +110,7 @@ class GMapsBrowser(QWebView):
         #types_str = ", ".join(map(str, marker_types))
         center_str = str(lat_center)[:7] +"," + str(lon_center)[:7]
         #print(types_str)
-        print("show_points", center_str)
+        print(("show_points", center_str))
         #does not work otherwise
         path = os.getcwd().replace(os.sep, "/")+"/etc/"
 
@@ -114,7 +119,7 @@ class GMapsBrowser(QWebView):
         self.selected_icon_str = "'file:///"+path+"selected.png'"
 
         html = GMAPS_TEMPLATE.replace("__POINT__LIST__", list_str).replace("__CENTER__COORDS__", center_str).replace("__ZOOM__", str(zoom)).replace("__CURRENT__DIR__", path)
-        print (os.getcwd())
+        print((os.getcwd()))
         f = open("etc/last_map.html",'w')
         f.write(html)
         f.close()

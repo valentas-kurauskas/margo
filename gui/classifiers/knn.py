@@ -27,7 +27,7 @@ class KnnClassifier(classifier.CustomizedClassifier):
         except:
             self.show_info("knn.py: failed to test (wrong data format?): \n" + traceback.format_exc() + "\n")
             nan = float("nan")
-            print len(db.data["X"])
+            print(len(db.data["X"]))
             db.data[self.r_col] = [nan for x in range(len(db.data["X"]))]
         self.last_result = db
         return db

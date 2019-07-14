@@ -2,7 +2,7 @@ import sys
 import math
 import random
 import os
-from xyz import parse_file, CoordDB
+from .xyz import parse_file, CoordDB
 import traceback
 import numpy as np
 import pickle
@@ -47,7 +47,7 @@ class Classifier(object):
                 r = self.fcache[filename]
                 if "Y" in r.data:
                     cn = cn + ["Y"]
-                for x in r.data.keys():
+                for x in list(r.data.keys()):
                     if not x in cn: r.data.pop(x)
                 r.column_names = [x for x in r.column_names if x in cn]
                 return r
@@ -174,7 +174,7 @@ class ClassifierContainer:
 
     def register(classifier_class, caption):
         if classifier_class == CustomizedClassifier: return
-        print ("register", classifier_class, caption)
+        print(("register", classifier_class, caption))
         self.classes.append(classifier_class)
 
     def refresh(self):
@@ -196,7 +196,7 @@ def pit_index(y):
     return i
 
 def access(r, k, default = None):
-    if not k in r.keys(): return default
+    if not k in list(r.keys()): return default
     return r[k]
 
 
@@ -204,7 +204,7 @@ def access(r, k, default = None):
 def data_int(c):
     if isinstance(c, str):
         return lambda x: x[c] if c in x else None
-    if isinstance(c, (int, long, float, complex)):
+    if isinstance(c, (int, float, complex)):
         return lambda x: c
     if isinstance(c, tuple):
         return lambda x: x[c[0]][c[1]] if c[0] in x else None
@@ -299,7 +299,7 @@ def histogram(x, n_bins_max=4):
             counts[k]+=1
             mins[k] = min(xx, mins[k])
             maxs[k] = max(xx, maxs[k])
-    return ([] if len(nans) == 0 else [(nans[0], nans[0], len(nans))]) +  [ (mins[a], maxs[a], b) for (a,b) in sorted(counts.iteritems())]
+    return ([] if len(nans) == 0 else [(nans[0], nans[0], len(nans))]) +  [ (mins[a], maxs[a], b) for (a,b) in sorted(counts.items())]
 
 
 #print(histogram([1,2,21,1,11,1,1,2,1,1]))
@@ -415,7 +415,7 @@ class CustomizedClassifier(Classifier):
         else:
             pred = self.y_to_1d(self.clf.predict(db.data["X"]))
 
-        print (self.predict_prob, pred[:3], type(pred), type(pred[0]))
+        print((self.predict_prob, pred[:3], type(pred), type(pred[0])))
         db.data[self.r_col] = pred
         self.last_result = db
         return db
@@ -427,7 +427,7 @@ class CustomizedClassifier(Classifier):
     def show_stats(self, db):
         r = {}
         try:
-            if "Y" in db.data.keys():
+            if "Y" in list(db.data.keys()):
                 Y = self.y_to_1d(db.data["Y"])
                 prob = map(round2, db.data[self.r_col])
                 for i in range(db.size):
@@ -435,7 +435,7 @@ class CustomizedClassifier(Classifier):
                         r[Y[i]].append(prob[i])
                     else:
                         r[Y[i]] = [prob[i]]
-                r2 = [ (k, histogram(v)) for (k,v) in sorted(r.iteritems())]
+                r2 = [ (k, histogram(v)) for (k,v) in sorted(r.items())]
                 for k,v in r2:
                     self.show_info(str(k) + ": \n")
                     self.show_info(self.format1(v) + "\n")

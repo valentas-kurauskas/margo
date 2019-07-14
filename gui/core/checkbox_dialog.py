@@ -1,12 +1,13 @@
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 import sys
 
-class CheckBoxDialog(QtGui.QDialog):
+class CheckBoxDialog(QtWidgets.QDialog):
     def __init__(self, title, names, unchecked=[], parent = None):
         super(CheckBoxDialog, self).__init__(parent)
-        self.layout = QtGui.QVBoxLayout(self)
-        self.view = QtGui.QListView()
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.view = QtWidgets.QListView()
         model = QtGui.QStandardItemModel()
 
         item = QtGui.QStandardItem("--Select all--")
@@ -27,8 +28,8 @@ class CheckBoxDialog(QtGui.QDialog):
         self.view.setModel(model)
         self.layout.addWidget(self.view)
         # OK and Cancel buttons
-        self.buttons = QtGui.QDialogButtonBox(
-            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
+        self.buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal, self)
         self.layout.addWidget(self.buttons)
         self.setWindowTitle(title)
@@ -49,24 +50,24 @@ class CheckBoxDialog(QtGui.QDialog):
     def getUnchecked(title, names, unchecked=[], parent = None):
         dialog = CheckBoxDialog(title, names, unchecked, parent)
         result = dialog.exec_()
-        return (dialog.unchecked(), result == QtGui.QDialog.Accepted)
+        return (dialog.unchecked(), result == QtWidgets.QDialog.Accepted)
 
 
-class CheckBoxDialog2(QtGui.QDialog):
+class CheckBoxDialog2(QtWidgets.QDialog):
     def __init__(self, title, names1, names2, checked1=[], checked2=[], joindist=10, parent = None):
         super(CheckBoxDialog2, self).__init__(parent)
-        self.layout = QtGui.QVBoxLayout(self)
-        self.layout2 = QtGui.QHBoxLayout()
-        self.layout3 = QtGui.QVBoxLayout()
-        self.layout4 = QtGui.QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout2 = QtWidgets.QHBoxLayout()
+        self.layout3 = QtWidgets.QVBoxLayout()
+        self.layout4 = QtWidgets.QVBoxLayout()
         self.layout.addLayout(self.layout2)
         self.layout2.addLayout(self.layout3)
         self.layout2.addLayout(self.layout4)
 
-        self.layout5 = QtGui.QHBoxLayout()
+        self.layout5 = QtWidgets.QHBoxLayout()
         self.layout.addLayout(self.layout5)
 
-        self.view = QtGui.QListView()
+        self.view = QtWidgets.QListView()
         model = QtGui.QStandardItemModel()
 
 
@@ -78,11 +79,11 @@ class CheckBoxDialog2(QtGui.QDialog):
             item.setCheckable(True)
             model.appendRow(item)
             self.items.append(item)
-        self.layout3.addWidget(QtGui.QLabel("Columns to join:", self))
+        self.layout3.addWidget(QtWidgets.QLabel("Columns to join:", self))
         self.view.setModel(model)
         self.layout3.addWidget(self.view)
 
-        self.view2 = QtGui.QListView()
+        self.view2 = QtWidgets.QListView()
         model2 = QtGui.QStandardItemModel()
         self.names2 = names2
         self.items2 = []
@@ -92,20 +93,20 @@ class CheckBoxDialog2(QtGui.QDialog):
             item.setCheckable(True)
             model2.appendRow(item)
             self.items2.append(item)
-        self.layout4.addWidget(QtGui.QLabel("Columns to add/rewrite:", self))
+        self.layout4.addWidget(QtWidgets.QLabel("Columns to add/rewrite:", self))
         self.view2.setModel(model2)
         self.layout4.addWidget(self.view2)
 
-        self.layout5.addWidget(QtGui.QLabel("Maximum distance (meters): "))
-        self.spinBox = QtGui.QSpinBox()
+        self.layout5.addWidget(QtWidgets.QLabel("Maximum distance (meters): "))
+        self.spinBox = QtWidgets.QSpinBox()
         self.spinBox.setMinimum(0)
         self.spinBox.setMaximum(10000)
         self.spinBox.setValue(joindist)
         self.layout5.addWidget(self.spinBox)
 
         # OK and Cancel buttons
-        self.buttons = QtGui.QDialogButtonBox(
-            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
+        self.buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal, self)
         self.layout.addWidget(self.buttons)
         self.setWindowTitle(title)
@@ -122,7 +123,7 @@ class CheckBoxDialog2(QtGui.QDialog):
         dialog = CheckBoxDialog2(title, names1, names2, checked1, checked2, parent)
         result = dialog.exec_()
         c = dialog.checked()
-        return (c[0], c[1], dialog.spinBox.value(), result == QtGui.QDialog.Accepted)
+        return (c[0], c[1], dialog.spinBox.value(), result == QtWidgets.QDialog.Accepted)
 
 
 

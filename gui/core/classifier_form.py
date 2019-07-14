@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from classifier_form_ui import Ui_Dialog
-import config
+from .classifier_form_ui import Ui_Dialog
+from . import config
 
 #from classifier import *
 #from knn_classifier import *
 #from linear_classifier import *
 import traceback
 import os
-import classifier
+from . import classifier
 from classifiers import *
 # classifiers.knn_classifier
-from classifier import *
+from .classifier import *
 import numpy as np
 import sklearn
 import time
 
 class ClassifierDialog(Ui_Dialog):
     def __init__(self):
-        self.dialog = QtGui.QDialog()
+        self.dialog = QtWidgets.QDialog()
         self.setupUi(self.dialog)
         self.retranslateUi(self.dialog)
 
@@ -86,7 +86,7 @@ class ClassifierDialog(Ui_Dialog):
 
     def addInputTrainDialog(self):        
         ddir = "" if self.listWidget.count() == 0 else os.path.dirname(str(self.listWidget.item(0).text()))
-        s = QtGui.QFileDialog.getOpenFileNames(self.dialog, 'Select train files',ddir)
+        s,_ = QtWidgets.QFileDialog.getOpenFileNames(self.dialog, 'Select train files',ddir)
         if len(s) == 0: return
         self.listWidget.clear()
         s = [str(x) for x in s]
@@ -94,14 +94,14 @@ class ClassifierDialog(Ui_Dialog):
 
     def addInputTestDialog(self):
         ddir = "" if self.listWidget_2.count() == 0 else os.path.dirname(str(self.listWidget_2.item(0).text()))
-        s = QtGui.QFileDialog.getOpenFileNames(self.dialog, 'Select test files',ddir)
+        s,_ = QtWidgets.QFileDialog.getOpenFileNames(self.dialog, 'Select test files',ddir)
         if len(s) == 0: return
         self.listWidget_2.clear()
         s = [str(x) for x in s]
         self.listWidget_2.addItems(s)
 
     def selectOutputDirDialog(self):
-        d = QtGui.QFileDialog.getExistingDirectory(self.dialog, 'Select output directory', self.lineEdit.text())
+        d = QtWidgets.QFileDialog.getExistingDirectory(self.dialog, 'Select output directory', self.lineEdit.text())
         if d != "":
             self.lineEdit.setText(d)
 
@@ -132,7 +132,7 @@ class ClassifierDialog(Ui_Dialog):
             
             for i,test_items in enumerate(test_items_sets):
                 if separately: self.appendOutput("Testing file {0} of {1}: {2}\n".format(i+1,len(test_items_all),test_items[0]))
-                print ("test items sets", i, test_items_sets)
+                print(("test items sets", i, test_items_sets))
                 result = cl.test_files(test_items)
                 #self.appendOutput("Statistics:\n")
                 cl.show_stats(result)
@@ -171,8 +171,8 @@ class ClassifierDialog(Ui_Dialog):
 
             cv = False
             if (set(train_items) >= set(test_items)) and len(train_items) > 1:
-                 r = QtGui.QMessageBox.question(self.dialog, "Margo GUI", "The train set contains the test set. Do you want to run cross-validation?", QtGui.QMessageBox.No | QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
-                 if r == QtGui.QMessageBox.Yes:
+                 r = QtWidgets.QMessageBox.question(self.dialog, "Margo GUI", "The train set contains the test set. Do you want to run cross-validation?", QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes)
+                 if r == QtWidgets.QMessageBox.Yes:
                     cv = True
             if cv:
                     for j,x in enumerate(test_items):

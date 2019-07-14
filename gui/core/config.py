@@ -19,12 +19,12 @@ def get_all():
         f.close()
         return result
     except:
-        print("Could not load "+CFG, sys.exc_info())
+        print(("Could not load "+CFG, sys.exc_info()))
         return {}
 
 def get(attribute):
     a = get_all()
-    if attribute in a.keys():
+    if attribute in list(a.keys()):
         r = a[attribute]
         r = r.replace(sep, "\n")
         return r
@@ -33,10 +33,9 @@ def get(attribute):
 
 def set(attribute, value):
     a = get_all()
-    a[attribute] = value
-    value.replace("\n", sep)
+    a[attribute] = value.replace("\n", sep)
     f = open(CFG, "w")
-    for k,v in a.iteritems():
+    for k,v in a.items():
         s = k+"="+v+"\n"
         #print ("write: ", s)
         f.write(s)

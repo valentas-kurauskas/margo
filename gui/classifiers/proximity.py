@@ -1,4 +1,4 @@
-from knnlin import KnnLinClassifier
+from .knnlin import KnnLinClassifier
 from core.classifier import *
 #Knearest neighbours and linear classifier combo
 

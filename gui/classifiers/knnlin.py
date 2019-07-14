@@ -1,5 +1,5 @@
-from linear import LinearClassifier
-from knn import KnnClassifier
+from .linear import LinearClassifier
+from .knn import KnnClassifier
 from core.classifier import *
 
 #Knearest neighbours and linear classifier combo

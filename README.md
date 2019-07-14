@@ -11,3 +11,5 @@ At present the raster processor works only with raster files in hfz format and s
 Documentation: see doc/ (to be added more).
 
 Comments and feedback is welcome: myfirstname@gmail.com.
+
+*2019-07-14 update: Check the branch python3-dev for a not yet complete python3 and PyQt5 version.*

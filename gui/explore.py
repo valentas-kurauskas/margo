@@ -454,7 +454,7 @@ class MainWindowContents(QtWidgets.QWidget):
     def update_3d(self):
         if (not self.canvas3d.corresponding_dock.isVisible()):
             return;
-        ax3 = self.figure3d.gca(projection='3d')
+        ax3 = self.figure3d.add_subplot(projection='3d')
         #ax3.cla()
         #ax3.grid(b=False)
         try:

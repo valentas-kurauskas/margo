@@ -1,5 +1,8 @@
 numpy
 scipy
 matplotlib
-sklearn
-gdal
+scikit-sklearn
+#gdal
+pygdal
+PyQt5
+PyQtWebEngine

@@ -43,7 +43,8 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.canvas.customContextMenuRequested.connect(self.exec_canvas_menu)
 
         self.RS = RectangleSelector(self.figure.gca(), self.rectangle_selected,
-                                       drawtype='box', useblit=True,
+                                       #drawtype='box', 
+                                       useblit=True,
                                        button=[1], #[1,3], # don't use middle button
                                        minspanx=5, minspany=5,
                                        spancoords='pixels')

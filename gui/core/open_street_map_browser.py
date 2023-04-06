@@ -5,8 +5,8 @@ from PyQt6.QtCore import QObject, pyqtSlot
 import os
 
 
-f = open("etc/gmaps_template.html", 'r')
-GMAPS_TEMPLATE = f.read()
+f = open("etc/open_street_map_template.html", 'r')
+OPEN_STREETMAP_TEMPLATE = f.read()
 f.close()
 
 #https://gist.github.com/agateau/1647398
@@ -24,7 +24,7 @@ f.close()
 #        return 0
 
 
-class GMapsBrowser(QWebEngineView):
+class OSMapsBrowser(QWebEngineView):
 
     def __init__(self):
         QWebEngineView.__init__(self)
@@ -35,13 +35,19 @@ class GMapsBrowser(QWebEngineView):
         #self.settings().setOfflineWebApplicationCacheQuota(0)
 
         self.loadFinished.connect(self._result_available)
-        self.settings().setAttribute(self.settings().AutoLoadImages, True)
+        print("!disabled autoload images!")
+        #self.settings().setAttribute(self.settings().AutoLoadImages, True)
+
+        #profile = QWebEngineProfile.defaultProfile()
+        #profile.setOption(QtWebEngineWidgets.QWebEngineSettings.AutoLoadImages, True)
+
         #self.click_catcher = ClickCatcher(self, self.clicked)
         #self.page().mainFrame().addToJavaScriptWindowObject("outside", self.click_catcher)
         #self.networkAccessManager().finished.connect(self.inspect_finished)
         self.last_id_list = None
         self.last_marked = None
         self.last_selection = None
+        print("Maps inited")
    
     def mark_selected(self, ID, internal = False):
         if self.last_id_list is None: return
@@ -83,6 +89,13 @@ class GMapsBrowser(QWebEngineView):
         print("result2", len(x))
 
     def _result_available(self, ok):
+        print ("_result_available")
+
+        if not ok:
+            print("Failed to load map!")
+        else:
+            print("Map loaded successfully!")
+
         #self.count += 1
         #if (self.count % 2 == 1):
         #    return
@@ -118,16 +131,18 @@ class GMapsBrowser(QWebEngineView):
         self.current_icon_str = "'file:///"+path+"current.png'"
         self.selected_icon_str = "'file:///"+path+"selected.png'"
 
-        html = GMAPS_TEMPLATE.replace("__POINT__LIST__", list_str).replace("__CENTER__COORDS__", center_str).replace("__ZOOM__", str(zoom)).replace("__CURRENT__DIR__", path)
+        html = OPEN_STREETMAP_TEMPLATE.replace("__POINT__LIST__", list_str).replace("__CENTER__COORDS__", center_str).replace("__ZOOM__", str(zoom)).replace("__CURRENT__DIR__", path)
         print((os.getcwd()))
-        f = open("etc/last_map.html",'w')
+        f = open("etc/last_osmap.html",'w')
         f.write(html)
         f.close()
         self.last_id_list = id_list
         self.last_selection = None
         self.last_marked = None
+
         self.setHtml(html)
 
     #def set_click_catcher(owner, f):
     #    self.click_catcher.owner = owner
     #    self.click_catcher.on_click = f
+    

@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, Qt, QtCore, QtWidgets
+from PyQt6 import QtGui, QtCore, QtWidgets
 from . import config
 #import subprocess
 import os
@@ -16,7 +16,7 @@ class MargoWindow(QtWidgets.QDialog):
         #self.ticker = QtCore.QTimer()
         #self.ticker.timeout.connect(self.update_status)
         #self.ticker.start(1000)
-        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowMinimizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowType.WindowMinimizeButtonHint)
 
         self.inputEdit = QtWidgets.QLineEdit(";".join(config.get_multiline("last_hfz_input")))
         self.locationEdit = QtWidgets.QLineEdit(config.get("margo_location"))
@@ -56,7 +56,7 @@ class MargoWindow(QtWidgets.QDialog):
 
 
         hsplit = QtWidgets.QSplitter()
-        hsplit.setOrientation(Qt.Qt.Vertical)
+        hsplit.setOrientation(QtCore.Qt.Orientation.Vertical)
         
         layout.addWidget(self.outputEdit,3,1)
 

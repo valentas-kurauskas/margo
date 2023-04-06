@@ -11,6 +11,8 @@ Tested only on Ubuntu 22.04
 2. `sudo apt install libgdal-dev`. If there is a package conflict: `sudo apt remove mariadb-dev`.
 3. `pip install -r gui/requirements.txt`. The GDAL package version needs to match the GDAL version installed in the previous step.
 
+There is a strange known bug related with `chromium` browser internally used by PyQt and Linux. If the map does not work for you,
+check that all `ulimit` limits are unset.
 
 RUNNING GUI WITH PYTHON 2
 

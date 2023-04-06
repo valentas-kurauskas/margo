@@ -5,7 +5,7 @@
 
 import os
 import sys
-from PyQt5 import QtGui, Qt, QtCore, QtWidgets
+from PyQt6 import QtGui,  QtCore, QtWidgets
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -14,7 +14,7 @@ import numpy as np
 from matplotlib import cm
 
 from mpl_toolkits.mplot3d import Axes3D
-#from PyQt5.QtWebKit import QWebView, QWebSettings
+#from PyQt6.QtWebKit import QWebView, QWebSettings
 
 import os
 #from classifier_form import ClassifierDialog
@@ -86,10 +86,10 @@ class CoordDBModel(QtCore.QAbstractTableModel):
     def columnCount(self, parent = QtCore.QModelIndex()):
         return self.ncols
 
-    def data(self, index, role = QtCore.Qt.DisplayRole):
+    def data(self, index, role = QtCore.Qt.ItemDataRole.DisplayRole):
         row = index.row()
         col = index.column()
-        if role == QtCore.Qt.DisplayRole:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
             item = self.coordDB.get_item(row, col)
             if self.coordDB.column_names[col] in xyz.NUMERIC_FEATURES:
                 return QtCore.QVariant(item)
@@ -100,8 +100,8 @@ class CoordDBModel(QtCore.QAbstractTableModel):
         return QtCore.QVariant()
 
     def headerData(self, section, orientation, role):
-        if role == QtCore.Qt.DisplayRole:
-            if orientation == QtCore.Qt.Horizontal:
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
+            if orientation == QtCore.Qt.Orientation.Horizontal:
                 return (self.coordDB.column_names[section])
         return QtCore.QVariant()
 
@@ -118,9 +118,9 @@ class CoordDBModel(QtCore.QAbstractTableModel):
     def flags(self, index):
             if self.coordDB.column_names[index.column()] in ["SCORE", "COMMENT"]:
 
-                return QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled
+                return QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemFlag.ItemIsEnabled
             else:
-                return QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
+                return QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled
 
 class MyQSortFilterProxyModel(QtCore.QSortFilterProxyModel):
     def __init__(self, *args):
@@ -139,7 +139,7 @@ class CoordDBView(QtWidgets.QTableView):
     def __init__(self): 
         #QtGui.QTableWidget.__init__(self, *args)
         super(CoordDBView, self).__init__()
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
     def sort_items(self, index):
         self.sort_order = (self.sort_order + 1) % 2
@@ -168,13 +168,13 @@ class CoordDBView(QtWidgets.QTableView):
         modifiers = QtWidgets.QApplication.keyboardModifiers()
 
         if modifiers == QtCore.Qt.ControlModifier:
-            flags =  QtCore.QItemSelectionModel.Rows |QtCore.QItemSelectionModel.Toggle
+            flags =  QtCore.QAbstractItemView.SelectionBehavior.Rows |QtCore.QAbstractItemView.SelectionBehavior.Toggle
         else:
-            flags  = QtCore.QItemSelectionModel.Rows | QtCore.QItemSelectionModel.ClearAndSelect
+            flags  = QtCore.QAbstractItemView.SelectionBehavior.Rows | QtCore.QAbstractItemView.SelectionBehavior.ClearAndSelect
         r = [self.model().mapFromSource(x) for x in source_indices]
         s = QtCore.QItemSelection()
         for rr in r:
-            s.merge(QtCore.QItemSelection(rr,rr), QtCore.QItemSelectionModel.Rows | QtCore.QItemSelectionModel.Select)
+            s.merge(QtCore.QItemSelection(rr,rr), QtCore.QAbstractItemView.SelectionBehavior.Rows | QtCore.QAbstractItemView.SelectionBehavior.Select)
         #L = QtGui.QList(QtCore.QModelIndex)
         #for x in source_indices:
         #    L.push_back(self.model().mapFromSource(x))
@@ -222,7 +222,7 @@ class CoordDBView(QtWidgets.QTableView):
     def set_hidden_columns(self, hidden):
        # print "hiding columns"
         for i in range(self.model().columnCount()):
-            name = self.model().headerData(i, QtCore.Qt.Horizontal, QtCore.Qt.DisplayRole)
+            name = self.model().headerData(i, QtCore.Qt.Orientation.Horizontal, QtCore.Qt.ItemDataRole.DisplayRole)
             #print name
             self.setColumnHidden(i, name in hidden)
 
@@ -274,12 +274,12 @@ class MainWindowContents(QtWidgets.QWidget):
         new_index = self.table.model().mapFromSource(source_index)
         #print (new_index.column(), new_index.row())
         
-        #self.table.selectionModel().select(new_index, QtWidgets.QItemSelectionModel.Toggle | QtWidgets.QItemSelectionModel.Rows)
+        #self.table.selectionModel().select(new_index, QtWidgets.QAbstractItemView.SelectionBehavior.Toggle | QtWidgets.QAbstractItemView.SelectionBehavior.Rows)
 
         modifiers = QtWidgets.QApplication.keyboardModifiers()
-        flags  = QtCore.QItemSelectionModel.Rows |QtCore.QItemSelectionModel.ClearAndSelect
+        flags  = QtCore.QAbstractItemView.SelectionBehavior.Rows |QtCore.QAbstractItemView.SelectionBehavior.ClearAndSelect
         if modifiers == QtCore.Qt.ControlModifier:
-                flags =  QtCore.QItemSelectionModel.Rows |QtCore.QItemSelectionModel.Toggle
+                flags =  QtCore.QAbstractItemView.SelectionBehavior.Rows |QtCore.QAbstractItemView.SelectionBehavior.Toggle
         self.table.selectionModel().setCurrentIndex(new_index, flags) #ClearAndSelect)
 
         #self.table.selectRow(new_index.row())
@@ -351,7 +351,7 @@ class MainWindowContents(QtWidgets.QWidget):
         self.selected_filter_button = QtWidgets.QPushButton("Selection")
         hgroup = QtWidgets.QGroupBox()
         hlayout = QtWidgets.QHBoxLayout()
-        hlayout.setAlignment(QtCore.Qt.AlignRight)
+        hlayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         hlayout.addWidget(self.filter_button)
         hlayout.addWidget(self.selected_filter_button)
         hlayout.addWidget(self.unfilter_button)
@@ -384,36 +384,36 @@ class MainWindowContents(QtWidgets.QWidget):
         #self.data_tabs.addTab(self.map_canvas, "Point map") TODO: if we want to make interactive, etc, there will be some work 
 
         self.canvasMenu = QtWidgets.QMenu(self)
-        ca = QtWidgets.QAction('Normalize by height', self)
+        ca = QtGui.QAction('Normalize by height', self)
         ca.triggered.connect(self.update_profile)
         ca.setCheckable(True)
         self.canvasMenu.addAction(ca)
         self.normalize_profile_action = ca
 
-        ca = QtWidgets.QAction('Normalize by ditch distance', self)
+        ca = QtGui.QAction('Normalize by ditch distance', self)
         ca.triggered.connect(self.update_profile)
         ca.setCheckable(True)
         self.canvasMenu.addAction(ca)
         self.hnormalize_profile_action = ca
 
-        ca = QtWidgets.QAction('Align top', self)
+        ca = QtGui.QAction('Align top', self)
         ca.triggered.connect(self.update_profile)
         ca.setCheckable(True)
         self.canvasMenu.addAction(ca)
         self.align_top_action = ca
 
-        self.canvas.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.canvas.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.canvas.customContextMenuRequested.connect(self.exec_canvas_menu)
 
         self.canvas3dMenu = QtWidgets.QMenu(self)
-        ca = QtWidgets.QAction('Draw RESCALED', self)
+        ca = QtGui.QAction('Draw RESCALED', self)
         ca.triggered.connect(self.update_3d)
         #ca.triggered.connect(lambda x: self.figure3d.gca(projection='3d').relim())
         ca.setCheckable(True)
         self.canvas3dMenu.addAction(ca)
         self.draw3d_rescaled_action = ca
  
-        self.canvas3d.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.canvas3d.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.canvas3d.customContextMenuRequested.connect(self.exec_canvas3d_menu)
 
         self.gmaps_show_column = config.get("gmaps_show_column")
@@ -830,7 +830,7 @@ class MainWindow(QtWidgets.QMainWindow):
             d = QtWidgets.QDockWidget(titles[i], self)
             d.setWidget(widgets[i])
             d.setObjectName(titles[i])
-            self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, d)
+            self.addDockWidget(QtCore.Qt.DockWidgetArea.BottomDockWidgetArea, d)
             self.docks.append(d)
             widgets[i].corresponding_dock = d
             if i != 0:
@@ -888,44 +888,44 @@ class MainWindow(QtWidgets.QMainWindow):
         #mwc.installEventFilter(ef)
         #mwc.table.installEventFilter(ef)
 
-        openFile = QtWidgets.QAction(QtGui.QIcon('open.png'), 'Open..', self)
+        openFile = QtGui.QAction(QtGui.QIcon('open.png'), 'Open..', self)
         openFile.setShortcut('Ctrl+O')
         openFile.setStatusTip('Load XYZ or SHP File')
         openFile.triggered.connect(self.showDialog)
 
 
-        openMultiFile = QtWidgets.QAction('Open multiple..', self)
+        openMultiFile = QtGui.QAction('Open multiple..', self)
         openMultiFile.setStatusTip('Merge multiple files')
         openMultiFile.triggered.connect(self.showMultiDialog)
 
-        importJoin = QtWidgets.QAction('Join..', self)
+        importJoin = QtGui.QAction('Join..', self)
         importJoin.setStatusTip('Join another table to the current one')
         importJoin.triggered.connect(self.showImportJoinDialog)
 
 
-        saveFile = QtWidgets.QAction('Save', self)
+        saveFile = QtGui.QAction('Save', self)
         saveFile.setShortcut('Ctrl+S')
         saveFile.setStatusTip('Save XYZ File')
         saveFile.triggered.connect(self.save_xyz)
 
-        saveAs = QtWidgets.QAction('Save As..', self)
+        saveAs = QtGui.QAction('Save As..', self)
         saveAs.setStatusTip('Save XYZ File As')
         saveAs.triggered.connect(self.showSaveDialog)
 
-        exportCSV = QtWidgets.QAction('&Comma-separated text file (CSV)..', self)
+        exportCSV = QtGui.QAction('&Comma-separated text file (CSV)..', self)
         exportCSV.setStatusTip('Export current table as csv')
         exportCSV.triggered.connect(self.showExportCSVDialog)
 
-        exportSHP = QtWidgets.QAction('&ESRI shapefile..', self)
+        exportSHP = QtGui.QAction('&ESRI shapefile..', self)
         exportSHP.setStatusTip('Export current table as shp')
         exportSHP.triggered.connect(self.showExportSHPDialog)
 
-        loadRaster = QtWidgets.QAction('Load raster..', self)
+        loadRaster = QtGui.QAction('Load raster..', self)
         loadRaster.setStatusTip('Load raster file')
         self.raster_filename = config.get("last_raster_fname")
         loadRaster.triggered.connect(self.showRasterDialog)
 
-        loadProj = QtWidgets.QAction('Load projection..', self)
+        loadProj = QtGui.QAction('Load projection..', self)
         loadProj.setStatusTip('Load ESRI projection file')
         loadProj.triggered.connect(self.showProjectionDialog)
 
@@ -934,22 +934,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 
-        showSelected = QtWidgets.QAction('Refresh Google map', self)
+        showSelected = QtGui.QAction('Refresh Google map', self)
         #openFile.setShortcut('Ctrl+O')
         showSelected.setStatusTip('Show all visible objects')
         showSelected.triggered.connect(self.mwc.show_map)
 
-        selectVisible = QtWidgets.QAction('Show/hide columns', self)
+        selectVisible = QtGui.QAction('Show/hide columns', self)
         #openFile.setShortcut('Ctrl+O')
         selectVisible.setStatusTip('Select visible/exportable columns')
         selectVisible.triggered.connect(self.mwc.select_visible_columns)
 
 
-        convertshp = QtWidgets.QAction('Cut masks..', self)
+        convertshp = QtGui.QAction('Cut masks..', self)
         convertshp.setStatusTip('Cut shapes from raster file')
         convertshp.triggered.connect(self.convertSHPWindow.show)
 
-        process = QtWidgets.QAction('Generate detections..', self)
+        process = QtGui.QAction('Generate detections..', self)
         #openFile.setShortcut('Ctrl+O')
         process.setStatusTip('Generate detections using Margo backend')
         process.triggered.connect(self.show_margo_dialog)
@@ -957,12 +957,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         self.classifier_form = classifier_form.ClassifierDialog() 
-        classify = QtWidgets.QAction('Classify detections..', self)
+        classify = QtGui.QAction('Classify detections..', self)
         #openFile.setShortcut('Ctrl+O')
         classify.setStatusTip('Select and run classification')
         classify.triggered.connect(self.classifier_form.dialog.show)
 
-        self.show_only_filtered = QtWidgets.QAction('Show only filter results', self)
+        self.show_only_filtered = QtGui.QAction('Show only filter results', self)
         self.show_only_filtered.setStatusTip('Show only filter results')
         self.show_only_filtered.setCheckable(True)
         b = config.get("show_only_filtered")=="True"
@@ -972,7 +972,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.statusbar = self.statusBar()
         self.coordStatus = QtWidgets.QLabel("()")
-        self.coordStatus.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.coordStatus.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
         self.statusbar.showMessage("Welcome")
         self.statusbar.addPermanentWidget(self.coordStatus)
 
@@ -1022,7 +1022,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def restoreMWState(self):
-        settings = QtCore.QSettings("layout.ini", QtCore.QSettings.IniFormat)
+        settings = QtCore.QSettings("layout.ini", QtCore.QSettings.Format.IniFormat)
         if (not settings.contains("geometry")): return
         self.restoreGeometry(settings.value("geometry"))
         self.restoreState(settings.value("windowState"))
@@ -1130,8 +1130,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mwc.table.selectionModel().selectionChanged.connect(lambda x: self.mwc.raster_map.replot(only_points=True))
         self.mwc.table.selectionModel().selectionChanged.connect(self.mwc.update_map_selection)
         self.mwc.table.selectionModel().selectionChanged.connect(self.showRC)
-        self.mwc.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        #self.mwc.table.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
+        self.mwc.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        #self.mwc.table.setSelectionBehavior(QtGui.QAbstractItemView.MultiSelection)
 
         self.mwc.table.setSortingEnabled(True)
         self.mwc.show_map(map_all = True)
@@ -1204,7 +1204,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mwc.update_raster()
 
     def saveMWState(self):
-        settings = QtCore.QSettings("layout.ini", QtCore.QSettings.IniFormat)
+        settings = QtCore.QSettings("layout.ini", QtCore.QSettings.Format.IniFormat)
         settings.setValue("geometry", self.saveGeometry())
         settings.setValue("windowState", self.saveState())
 
@@ -1223,7 +1223,7 @@ def main():
     print("MainWindow created")
     app.lastWindowClosed.connect(mainWindow.saveMWState)
     app.lastWindowClosed.connect(mainWindow.margoWindow.kill_process)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 '''
 import traceback

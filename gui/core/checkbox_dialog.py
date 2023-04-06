@@ -1,6 +1,6 @@
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+from PyQt6 import QtCore
+from PyQt6 import QtGui
+from PyQt6 import QtWidgets
 import sys
 
 class CheckBoxDialog(QtWidgets.QDialog):
@@ -30,7 +30,7 @@ class CheckBoxDialog(QtWidgets.QDialog):
         # OK and Cancel buttons
         self.buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
-            QtCore.Qt.Horizontal, self)
+            QtCore.Qt.Orientation.Horizontal, self)
         self.layout.addWidget(self.buttons)
         self.setWindowTitle(title)
         self.buttons.accepted.connect(self.accept)
@@ -107,7 +107,7 @@ class CheckBoxDialog2(QtWidgets.QDialog):
         # OK and Cancel buttons
         self.buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
-            QtCore.Qt.Horizontal, self)
+            QtCore.Qt.Orientation.Horizontal, self)
         self.layout.addWidget(self.buttons)
         self.setWindowTitle(title)
         self.buttons.accepted.connect(self.accept)

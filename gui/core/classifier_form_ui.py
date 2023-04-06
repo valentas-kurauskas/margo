@@ -7,7 +7,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -68,13 +68,13 @@ class Ui_Dialog(object):
         self.horizontalLayout_3.addWidget(self.pushButton_3)
         self.verticalLayout.addWidget(self.horizontalGroupBox_3)
         self.horizontalGroupBox_4 = QtWidgets.QGroupBox(Dialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.horizontalGroupBox_4.sizePolicy().hasHeightForWidth())
         self.horizontalGroupBox_4.setSizePolicy(sizePolicy)
         self.horizontalGroupBox_4.setMinimumSize(QtCore.QSize(0, 0))
-        self.horizontalGroupBox_4.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.horizontalGroupBox_4.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignTop)
         self.horizontalGroupBox_4.setObjectName(_fromUtf8("horizontalGroupBox_4"))
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.horizontalGroupBox_4)
         self.horizontalLayout_4.setContentsMargins(-1, 0, -1, 0)
@@ -90,7 +90,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_4.addWidget(self.checkBox_3)
         self.verticalLayout.addWidget(self.horizontalGroupBox_4)
         self.verticalGroupBox_2 = QtWidgets.QGroupBox(Dialog)
-        self.verticalGroupBox_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.verticalGroupBox_2.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignTop)
         self.verticalGroupBox_2.setObjectName(_fromUtf8("verticalGroupBox_2"))
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalGroupBox_2)
         self.verticalLayout_2.setContentsMargins(-1, 0, -1, -1)
@@ -110,7 +110,7 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.textEdit)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem)
         self.pushButton_6 = QtWidgets.QPushButton(self.verticalGroupBox_2)
         self.pushButton_6.setObjectName(_fromUtf8("pushButton_6"))

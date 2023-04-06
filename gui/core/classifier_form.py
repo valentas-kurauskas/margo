@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 from .classifier_form_ui import Ui_Dialog
 from . import config
@@ -25,7 +25,7 @@ class ClassifierDialog(Ui_Dialog):
         self.setupUi(self.dialog)
         self.retranslateUi(self.dialog)
 
-        self.dialog.setWindowFlags(self.dialog.windowFlags() | QtCore.Qt.WindowMinimizeButtonHint)
+        self.dialog.setWindowFlags(self.dialog.windowFlags() | QtCore.Qt.WindowType.WindowMinimizeButtonHint)
         
         self.comboBox.clear()
         self.comboBox.addItem("-Select classifier-")

@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 #from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
 
 import matplotlib.pyplot as plt
-from PyQt5 import QtGui, Qt, QtCore, QtWidgets
+from PyQt6 import QtGui, QtCore, QtWidgets
 #import os
 from . import gdal_interface
 from matplotlib.colors import LightSource
@@ -22,7 +22,7 @@ class SurfaceBrowser(QtWidgets.QWidget):
 
         self.source = source
 
-        splitter = QtWidgets.QSplitter(Qt.Qt.Vertical, self)
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical, self)
         
         self.figure = plt.figure(frameon = False) #(3)?
         self.figure.add_axes([0,0,1,1])
@@ -35,11 +35,11 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.canvas.mpl_connect("resize_event", lambda x: self.replot(center_at_cr = False, autozoom=True))
 
         self.canvasMenu = QtWidgets.QMenu(self)
-        ca = QtWidgets.QAction('Insert a non-detection here', self)
+        ca = QtGui.QAction('Insert a non-detection here', self)
         ca.triggered.connect(self.insert_nondetection)
         self.canvasMenu.addAction(ca)
 
-        self.canvas.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.canvas.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.canvas.customContextMenuRequested.connect(self.exec_canvas_menu)
 
         self.RS = RectangleSelector(self.figure.gca(), self.rectangle_selected,
@@ -123,16 +123,16 @@ class SurfaceBrowser(QtWidgets.QWidget):
         a.setToolTip('Turn off pan/zoom')
         #self.nav.configure_subplots.setVisible(False)
         #self.nav.save_figure.setVisible(False)
-        for i,x in enumerate(self.nav.findChildren(QtWidgets.QAction)):
+        for i,x in enumerate(self.nav.findChildren(QtGui.QAction)):
             #print i,x
             if x.text() in ['Subplots', 'Save', 'Customize', 'Back', 'Forward']:
                 x.setVisible(False)
 
         #self.nav.DeleteToolByPos(6)
         #self.nav.setMaximumWidth(200)
-        clayout.addWidget(self.nav, 0, QtCore.Qt.AlignLeft)
-        clayout.setAlignment(QtCore.Qt.AlignLeft)
-        clayout.addItem(QtWidgets.QSpacerItem(20,20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding))
+        clayout.addWidget(self.nav, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+        clayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
+        clayout.addItem(QtWidgets.QSpacerItem(20,20, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding))
 
         clayout2 = QtWidgets.QHBoxLayout()
 
@@ -159,7 +159,7 @@ class SurfaceBrowser(QtWidgets.QWidget):
         splitter.addWidget(self.canvas)
         
         layout = QtWidgets.QVBoxLayout()
-        layout.setAlignment(QtCore.Qt.AlignTop)
+        layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         layout.addWidget(splitter)
         clayout.setContentsMargins(0,0,0,0)
         self.setLayout(layout)

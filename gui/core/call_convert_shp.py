@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, Qt, QtCore, QtWidgets
+from PyQt6 import QtGui, QtCore, QtWidgets
 from . import config
 #import subprocess
 import os
@@ -16,7 +16,7 @@ class ConvertSHPWindow(QtWidgets.QDialog):
         #self.ticker = QtCore.QTimer()
         #self.ticker.timeout.connect(self.update_status)
         #self.ticker.start(1000)
-        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowMinimizeButtonHint)
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowType.WindowMinimizeButtonHint)
 
         self.inputEdit = QtWidgets.QLineEdit(config.get("convert_shp_last_hfz"))
         self.shpEdit = QtWidgets.QLineEdit(config.get("convert_shp_last_shp"))

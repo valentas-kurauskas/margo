@@ -3,6 +3,6 @@ scipy
 matplotlib
 scikit-sklearn
 #gdal
-pygdal
+GDAL==3.4.1
 PyQt5
 PyQtWebEngine

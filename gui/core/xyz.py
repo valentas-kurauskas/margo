@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .lks_wgs import lks94_to_wgs
-#from osgeo import ogr,osr
+from osgeo import ogr,osr
 import os
 import csv
 

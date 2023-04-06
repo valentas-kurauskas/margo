@@ -1,5 +1,5 @@
-#from osgeo import gdal,osr
-#from osgeo.gdalconst import *
+from osgeo import gdal,osr
+from osgeo.gdalconst import *
 import sys
 import numpy as np
 import matplotlib.pyplot as plt

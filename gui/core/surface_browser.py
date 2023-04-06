@@ -165,7 +165,7 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def mouse_press(self,event):
-        self.RS.set_active(self.raster is not None and not self.nav._active in ['PAN', 'ZOOM'])
+        self.RS.set_active(self.raster is not None and not self.nav.mode in ['pan', 'zoom'])
 
     def rectangle_selected(self, eclick, erelease):
         x1, y1 = eclick.xdata, eclick.ydata
@@ -175,8 +175,8 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.source.select_rows(rows)
 
     def nav_pointer(self):
-        if self.nav._active == 'PAN': self.nav.pan()
-        if self.nav._active == 'ZOOM': self.nav.zoom()
+        if self.nav.mode == 'pan': self.nav.pan()
+        if self.nav.mode == 'zoom': self.nav.zoom()
 
     status_changed = QtCore.pyqtSignal(str)
     point_selected = QtCore.pyqtSignal(int)

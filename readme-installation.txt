@@ -2,7 +2,17 @@ Margo: Archeological raster data processor and semi-automatic burrial mound clas
 
 Licence for the original code (for dependencies see their separate licences): MIT, see LICENCE.
 
-RUNNING GUI WITH PYTHON
+RUNNING GUI WITH PYTHON 3
+
+Tested only on Ubuntu 22.04
+
+
+1. Better to use a new environment: `python3 -m venv env_margo`; `source env_margo/bin/activate`
+2. `sudo apt install libgdal-dev`. If there is a package conflict: `sudo apt remove mariadb-dev`.
+3. `pip install -r gui/requirements.txt`. The GDAL package version needs to match the GDAL version installed in the previous step.
+
+
+RUNNING GUI WITH PYTHON 2
 
 Dependencies for gui: Python (2.7), numpy, scipy, matplotlib, PyQt4, gdal. Use standard instructions for your operating system to install them:
 
@@ -10,7 +20,6 @@ Dependencies for gui: Python (2.7), numpy, scipy, matplotlib, PyQt4, gdal. Use s
 2. Install PyQt4 for Python 2.7 http://www.riverbankcomputing.co.uk/software/pyqt/download.
 3. sudo apt get install python-tk
 4. Use "pip install -r gui/requirements.txt" to install the remaining dependencies, see https://pip.pypa.io/en/latest/user_guide.html.
-
 
 If gdal installation fails (Ubuntu):
 
@@ -20,8 +29,9 @@ export C_INCLUDE_PATH=/usr/include/gdal
 pip install GDAL==1.10.0
 
 
+RUNNING THE GUI
 
-To run the gui: go to gui/ and run python explore.py.
+Go to `gui/` and run `python explore.py`.
 
 
 COMPILING THE C++ BACKEND

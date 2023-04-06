@@ -26,7 +26,8 @@ from core.call_margo import MargoWindow
 from core.call_convert_shp import ConvertSHPWindow
 from core.surface_browser import SurfaceBrowser
 from core.lks_wgs import lks94_to_wgs
-from core.gmaps_browser import GMapsBrowser
+#from core.gmaps_browser import GMapsBrowser
+from core.open_street_map_browser import OSMapsBrowser
 from core import gdal_interface
 from core.checkbox_dialog import CheckBoxDialog, CheckBoxDialog2
 from core.classifier import data, exceeds, remove_nans
@@ -331,7 +332,7 @@ class MainWindowContents(QtWidgets.QWidget):
         self.infobox = QtWidgets.QPlainTextEdit() #QtGui.QLabel()
         self.infobox.setReadOnly(True)
  
-        self.the_map = GMapsBrowser()
+        self.the_map = OSMapsBrowser()
         #!tmp 
         ##2019## self.the_map.page().mainFrame().addToJavaScriptWindowObject("outside", self)
 
@@ -534,14 +535,15 @@ class MainWindowContents(QtWidgets.QWidget):
             return
         if (self.last_mapped == None):
             #self.the_map.page().mainFrame().evaluateJavaScript("map.setZoom(16)")
-            self.the_map.page().runJavaScript("map.setZoom(16)")
+            print("!setZoom disabled!")
+            #self.the_map.page().runJavaScript("map.setZoom(16)")
         
         self.last_mapped = (x,y)
        
         wgs_x,wgs_y = lks94_to_wgs(x,y)
 
 
-        s = "map.panTo( new google.maps.LatLng("+str(wgs_x)[:7] + ", " + str(wgs_y)[:7] + "));"
+        s = "maexplore_map.panTo( new L.LatLng("+str(wgs_x)[:7] + ", " + str(wgs_y)[:7] + "));"
         #print(s)
         self.the_map.page().runJavaScript(s);
         #self.the_map.mark_selected(self.table.db().get_item(cr, "ID"))

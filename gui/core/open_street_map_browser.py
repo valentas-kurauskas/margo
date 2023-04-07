@@ -9,21 +9,6 @@ f = open("etc/open_street_map_template.html", 'r')
 OPEN_STREETMAP_TEMPLATE = f.read()
 f.close()
 
-#https://gist.github.com/agateau/1647398
-#class ClickCatcher(QObject):
-#    def __init__(self, method_owner, on_click):
-#        QObject.__init__(self)
-#        self.on_click = on_click
-#        self.method_owner = method_owner
-#        print ("initin")
-#
-#    @pyqtSlot(str, result=int)
-#    def clicked(self, value):
-#        print("clicking..")
-#        self.on_click(self.method_owner, value)
-#        return 0
-
-
 class OSMapsBrowser(QWebEngineView):
 
     def __init__(self):
@@ -47,7 +32,7 @@ class OSMapsBrowser(QWebEngineView):
         self.last_id_list = None
         self.last_marked = None
         self.last_selection = None
-        print("Maps inited")
+        #print("Maps inited")
    
     def mark_selected(self, ID, internal = False):
         if self.last_id_list is None: return
@@ -132,7 +117,7 @@ class OSMapsBrowser(QWebEngineView):
         self.selected_icon_str = "'file:///"+path+"selected.png'"
 
         html = OPEN_STREETMAP_TEMPLATE.replace("__POINT__LIST__", list_str).replace("__CENTER__COORDS__", center_str).replace("__ZOOM__", str(zoom)).replace("__CURRENT__DIR__", path)
-        print((os.getcwd()))
+        #print((os.getcwd()))
         f = open("etc/last_osmap.html",'w')
         f.write(html)
         f.close()

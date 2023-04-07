@@ -13,3 +13,4 @@ Documentation: see doc/ (to be added more).
 Comments and feedback is welcome: myfirstname@gmail.com.
 
 *2019-07-14 update: Check the branch python3-dev for a not yet complete python3 and PyQt5 version.*
+*2023-05-07 update: Check the branch python3-PyQt6 for a not yet complete, but working python3 and PyQt6 version.*

@@ -5,7 +5,8 @@
 
 import os
 import sys
-from PyQt6 import QtGui,  QtCore, QtWidgets
+from PyQt6 import QtGui,  QtCore, QtWidgets, QtWebChannel
+import time
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -167,14 +168,14 @@ class CoordDBView(QtWidgets.QTableView):
                 return
         modifiers = QtWidgets.QApplication.keyboardModifiers()
 
-        if modifiers == QtCore.Qt.ControlModifier:
-            flags =  QtCore.QAbstractItemView.SelectionBehavior.Rows |QtCore.QAbstractItemView.SelectionBehavior.Toggle
+        if modifiers == QtCore.Qt.KeyboardModifier.ControlModifier:
+            flags =  QtCore.QItemSelectionModel.SelectionFlag.Rows | QtCore.QItemSelectionModel.SelectionFlag.Toggle 
         else:
-            flags  = QtCore.QAbstractItemView.SelectionBehavior.Rows | QtCore.QAbstractItemView.SelectionBehavior.ClearAndSelect
+            flags  = QtCore.QItemSelectionModel.SelectionFlag.Rows | QtCore.QItemSelectionModel.SelectionFlag.ClearAndSelect
         r = [self.model().mapFromSource(x) for x in source_indices]
         s = QtCore.QItemSelection()
         for rr in r:
-            s.merge(QtCore.QItemSelection(rr,rr), QtCore.QAbstractItemView.SelectionBehavior.Rows | QtCore.QAbstractItemView.SelectionBehavior.Select)
+            s.merge(QtCore.QItemSelection(rr,rr), QtCore.QItemSelectionModel.SelectionFlag.Rows | QtCore.QItemSelectionModel.SelectionFlag.Select)
         #L = QtGui.QList(QtCore.QModelIndex)
         #for x in source_indices:
         #    L.push_back(self.model().mapFromSource(x))
@@ -234,9 +235,21 @@ class FilterObject(QtCore.QObject):
     def eventFilter(self, obj, event):
         if (event.type() == QtCore.QEvent.KeyPress):
             key = event.key()
-            if (event.modifiers() == Qt.ControlModifier):
+            if (event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier):
                 if(key == Qt.Key_S):
                     print('standard response')
+
+class ClickCatcher(QtCore.QObject):
+    def __init__(self, function):
+        super(ClickCatcher, self).__init__()
+        self.function = function
+
+    @QtCore.pyqtSlot(str, result=int)
+    def on_click(self, value):
+        return self.function(value)
+
+
+
 
 class MainWindowContents(QtWidgets.QWidget):
     
@@ -251,15 +264,15 @@ class MainWindowContents(QtWidgets.QWidget):
         except:
             self.max_points_gmap = 2000
 
-    @QtCore.pyqtSlot(str, result=int)
     def map_clicked(self, value):
-        #print(value)
+        print("map_clicked", value)
         #self.table.setCurrentCell(self.table.coordDB.find_name(value), 1)
         #self.table.setCurrentCell(self.table.find_row(int(value.split(":")[0])), self.table.currentColumn())
         
         row = int(value.split(":")[0])
         self.select_record(row, "gmap")
         return 0
+
 
     def select_record(self, ID, caller):
         #print ("select_record", ID, caller) #TODO!!! ID should be row index!
@@ -277,9 +290,9 @@ class MainWindowContents(QtWidgets.QWidget):
         #self.table.selectionModel().select(new_index, QtWidgets.QAbstractItemView.SelectionBehavior.Toggle | QtWidgets.QAbstractItemView.SelectionBehavior.Rows)
 
         modifiers = QtWidgets.QApplication.keyboardModifiers()
-        flags  = QtCore.QAbstractItemView.SelectionBehavior.Rows |QtCore.QAbstractItemView.SelectionBehavior.ClearAndSelect
-        if modifiers == QtCore.Qt.ControlModifier:
-                flags =  QtCore.QAbstractItemView.SelectionBehavior.Rows |QtCore.QAbstractItemView.SelectionBehavior.Toggle
+        flags  = QtCore.QItemSelectionModel.SelectionFlag.Rows | QtCore.QItemSelectionModel.SelectionFlag.ClearAndSelect
+        if modifiers == QtCore.Qt.KeyboardModifier.ControlModifier:
+                flags =  QtCore.QItemSelectionModel.SelectionFlag.Rows | QtCore.QItemSelectionModel.SelectionFlag.Toggle
         self.table.selectionModel().setCurrentIndex(new_index, flags) #ClearAndSelect)
 
         #self.table.selectRow(new_index.row())
@@ -658,7 +671,8 @@ class MainWindowContents(QtWidgets.QWidget):
         #    return
         if cr in rows:
             middle = cr
-        #FIX! self.the_map.page().mainFrame().addToJavaScriptWindowObject("outside", self)
+        #FIX! 
+        #self.the_map.page().mainFrame().addToJavaScriptWindowObject("outside", self)
         self.map_show_ids(rows, middle)
         #self.the_map.corresponding_dock.raise_()
         #data_tabs.setCurrentWidget(self.the_map)
@@ -1223,6 +1237,13 @@ def main():
     print("MainWindow created")
     app.lastWindowClosed.connect(mainWindow.saveMWState)
     app.lastWindowClosed.connect(mainWindow.margoWindow.kill_process)
+
+    channel = QtWebChannel.QWebChannel()
+    catcher = ClickCatcher(mainWindow.mwc.map_clicked)
+    mainWindow.mwc.the_map.page().setWebChannel(channel)
+    channel.registerObject("outside", catcher)
+    print("channel registered")
+
     sys.exit(app.exec())
 
 '''

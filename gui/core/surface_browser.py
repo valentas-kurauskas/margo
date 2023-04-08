@@ -1,5 +1,5 @@
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 #from matplotlib.backends.backend_qt4 import FigureCanvasQT as FigureCanvas
 #from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
 
@@ -165,7 +165,9 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def mouse_press(self,event):
-        self.RS.set_active(self.raster is not None and not self.nav.mode in ['pan', 'zoom'])
+        print("mouse_press", self.raster, "mode:", str(self.nav.mode.value))
+        print(self.raster is not None and self.nav.mode.value == '')
+        self.RS.set_active(self.raster is not None and self.nav.mode.value == '') # not self.nav.mode.value in ['pan', 'zoom'])
 
     def rectangle_selected(self, eclick, erelease):
         x1, y1 = eclick.xdata, eclick.ydata
@@ -175,8 +177,16 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.source.select_rows(rows)
 
     def nav_pointer(self):
-        if self.nav.mode == 'pan': self.nav.pan()
-        if self.nav.mode == 'zoom': self.nav.zoom()
+        if self.nav.mode == 'pan': 
+            print("nav_pointer: pan")
+            self.nav.pan()
+        if self.nav.mode == 'zoom': 
+            print("nav_pointer: zoom")
+            self.nav.zoom()
+        #?if 'pan' in self.nav.mode.value: self.nav.pan()
+        #?if 'zoom' in self.nav.mode.value: self.nav.zoom()
+
+
 
     status_changed = QtCore.pyqtSignal(str)
     point_selected = QtCore.pyqtSignal(int)
@@ -195,7 +205,8 @@ class SurfaceBrowser(QtWidgets.QWidget):
         #    c[-1].hide()
 
     def mouse_release(self, event):
-        self.RS.set_active(False)
+        print("mouse_release")
+        #!!2023 self.RS.set_active(False)
         if self.last_top_left is None: return
         ax = self.figure.gca()
         corners =  ax.transData.inverted().transform( ax.transAxes.transform( [(0.1, 0.1), (0.1,0.9), (0.9,0.1), (0.9,0.9)]))
@@ -349,11 +360,14 @@ class SurfaceBrowser(QtWidgets.QWidget):
             return
         
         if autozoom:
-            try:
-                self.nav._views.clear()
-                self.nav._positions.clear()
-            except:
-                print ("failed to clear views")
+            #2023. OK?
+            self.nav.update()
+                #print(dir(self.nav))
+            #!TMP! try:
+            #    self.nav._views.clear()
+            #    self.nav._positions.clear()
+            #!TMP! except:
+            #!TMP!    print ("failed to clear views")
 
         #print ("plot_area", top_left0, bottom_right0)
         

@@ -51,7 +51,7 @@
                 {
                     center: [__CENTER__COORDS__],
                     crs: L.CRS.EPSG3857,
-                    zoom: 12,
+                    zoom: __ZOOM__,
                     zoomControl: true,
                     preferCanvas: false,
                 }
@@ -62,7 +62,7 @@
                 {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             ).addTo(maexplore_map);
 
-            var normalIcon = new L.Icon({
+            var unselectedIcon = new L.Icon({
                   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
             });
 
@@ -70,17 +70,25 @@
                   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
             });
 
+            var currentIcon = new L.Icon({
+                  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+            });
+
+
+
             function markerOnClick(e) {
                 point_id=this.options.point_id
-                alert(point_id)
                 new QWebChannel(qt.webChannelTransport, function(channel) {
                     channel.objects.outside.on_click(point_id)
                 })
                 }
+
+            var all_markers = {};
             
 			function addMarkersToMap(map, markers) {
 			  for (var i = 0; i < markers.length; i++) {
-				var marker = L.marker([markers[i][1], markers[i][2]], {icon: normalIcon, point_id:markers[i][0]}).on('click', markerOnClick).addTo(map);
+				var marker = L.marker([markers[i][1], markers[i][2]], {icon: unselectedIcon, point_id:markers[i][0]}).on('click', markerOnClick).addTo(map);
+                all_markers[i] = marker;
 
 				marker.bindTooltip(
 				  '<div>' + markers[i][0] + '</div>',

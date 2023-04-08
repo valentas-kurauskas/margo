@@ -8,8 +8,8 @@ import sys
 from PyQt6 import QtGui,  QtCore, QtWidgets, QtWebChannel
 import time
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
@@ -189,7 +189,8 @@ class CoordDBView(QtWidgets.QTableView):
         hc = config.get_multiline("hidden_columns")
         r = 0
         if len(h) > 0 or len(hc) > 0:
-         r = QtWidgets.QMessageBox.question(self, "Margo GUI", "A row or column filter is active. Do you want to save all entries", "Save all", "Only filtered")
+         #r = QtWidgets.QMessageBox.question(self, "Margo GUI", "A row or column filter is active. Do you want to save all entries", "Save all", "Only filtered")
+         r = QtWidgets.QMessageBox.question(self, "Margo GUI", "A row or column filter is active. Click Yes to save only filtered entries. Click No to save all entries")
         if (r != 0):
             self.db().save_xyz(fname, h, hc)
         else:
@@ -595,7 +596,7 @@ class MainWindowContents(QtWidgets.QWidget):
         IDs = []
 
         if len(ids) > self.max_points_gmap:
-            r = QtWidgets.QMessageBox.question(self, "Margo GUI", "The number of points ("+str(len(ids)) +") is large. Show only a random selection of "+ str(self.max_points_gmap)+"? Later you can zoom in to a smaller area and use 'Update map'.", "Truncate", "Show all points")
+            r = QtWidgets.QMessageBox.question(self, "Margo GUI", "The number of points ("+str(len(ids)) +") is large. Show only a random selection of "+ str(self.max_points_gmap)+"? Later you can zoom in to a smaller area and use 'Update map'.") #, "Truncate", "Show all points")
             if (r == 0):
                 ids = list(sorted(random.sample(ids, self.max_points_gmap))) #ids[:self.max_points_gmap]
 
@@ -629,21 +630,22 @@ class MainWindowContents(QtWidgets.QWidget):
         if True:
             bounds = None
             try:
-                q = "map.getBounds().toString()"
+                q = "String([maexplore_map.getBounds()._southWest.lat, maexplore_map.getBounds()._southWest.lng, maexplore_map.getBounds()._northEast.lat, maexplore_map.getBounds()._northEast.lng])"
                 S = self.the_map.page().runJavaScript(q);
                 print(("bounds", S.typeName(), str(S.toString())))
                 #[(x, y.toMap()) for x,y in S.toMap().iteritems()]
-                bounds = eval(str(S.toString()))
+                bounds = [float(x) for x in str(S.toString()).split(",")]
                 print (bounds)
             except:
-                print ("Could not autodetect bounds")
+                print ("Could not autodetect bounds. [Filtering by map nyi in PyQt6]")
 
             if (map_all or bounds == None):
                 rows = range(self.table.db().size)
             else:
                 rows = []
                 db = self.table.db()
-                rows = db.filter_rectangle(bounds[0][0], bounds[1][0], bounds[0][1], bounds[1][1], convert_to_wgs=True)
+                #rows = db.filter_rectangle(bounds[0][0], bounds[1][0], bounds[0][1], bounds[1][1], convert_to_wgs=True)
+                rows = db.filter_rectangle(bounds[0], bounds[2], bounds[1], bounds[3], convert_to_wgs=True)
                 x = db.get_projection("LONGITUDE", rows)
                 y = db.get_projection("LATITUDE", rows) 
                 #for r in range(self.table.db().size):
@@ -1158,7 +1160,7 @@ class MainWindow(QtWidgets.QMainWindow):
                self.mwc.table.selectRow(0) 
 
     def showSaveDialog(self):
-        name = str(QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', self.current_fname))
+        name,_ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', self.current_fname)
         if name is None or name == "": return
         self.current_fname = name
         self.save_xyz()
@@ -1194,7 +1196,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def showExportCSVDialog(self):
         path = config.get("last_csv_fname")
-        csvname = QtWidgets.QFileDialog.getSaveFileName(self, 'Export file', path, "*.csv")
+        csvname,pattern = QtWidgets.QFileDialog.getSaveFileName(self, 'Export file', path, "*.csv")
         if csvname is None or csvname == "": return
         self.mwc.table.export_to_csv(str(csvname))
         config.set("last_csv_fname", csvname)
@@ -1206,7 +1208,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def showExportSHPDialog(self):
         path = config.get("last_shp_fname")
-        name = QtWidgets.QFileDialog.getSaveFileName(self, 'Export file', path, "*.shp")
+        name,pattern = QtWidgets.QFileDialog.getSaveFileName(self, 'Export file', path, "*.shp")
         if name is None or name == "": return
         self.mwc.table.save_shp(str(name))
         config.set("last_shp_fname", name)

@@ -11,7 +11,7 @@ class CheckBoxDialog(QtWidgets.QDialog):
         model = QtGui.QStandardItemModel()
 
         item = QtGui.QStandardItem("--Select all--")
-        item.setCheckState(0)
+        item.setCheckState(QtCore.Qt.CheckState.Unchecked)
         item.setCheckable(True)
         model.appendRow(item)
         self.sa = item
@@ -20,7 +20,7 @@ class CheckBoxDialog(QtWidgets.QDialog):
         self.items = []
         for x in names:
             item = QtGui.QStandardItem(x)
-            item.setCheckState(2 if not x in unchecked else 0)
+            item.setCheckState(QtCore.Qt.CheckState.Checked if not x in unchecked else QtCore.Qt.CheckState.Unchecked)
             item.setCheckable(True)
             model.appendRow(item)
             self.items.append(item)
@@ -29,7 +29,7 @@ class CheckBoxDialog(QtWidgets.QDialog):
         self.layout.addWidget(self.view)
         # OK and Cancel buttons
         self.buttons = QtWidgets.QDialogButtonBox(
-            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
             QtCore.Qt.Orientation.Horizontal, self)
         self.layout.addWidget(self.buttons)
         self.setWindowTitle(title)
@@ -49,8 +49,8 @@ class CheckBoxDialog(QtWidgets.QDialog):
     @staticmethod
     def getUnchecked(title, names, unchecked=[], parent = None):
         dialog = CheckBoxDialog(title, names, unchecked, parent)
-        result = dialog.exec_()
-        return (dialog.unchecked(), result == QtWidgets.QDialog.Accepted)
+        result = dialog.exec()
+        return (dialog.unchecked(), result == QtWidgets.QDialog.DialogCode.Accepted)
 
 
 class CheckBoxDialog2(QtWidgets.QDialog):
@@ -75,7 +75,7 @@ class CheckBoxDialog2(QtWidgets.QDialog):
         self.items = []
         for x in names1:
             item = QtGui.QStandardItem(x)
-            item.setCheckState(2 if x in checked1 else 0)
+            item.setCheckState(QtCore.Qt.CheckState.Checked  if x in checked1 else QtCore.Qt.CheckState.Unchecked )
             item.setCheckable(True)
             model.appendRow(item)
             self.items.append(item)
@@ -89,7 +89,7 @@ class CheckBoxDialog2(QtWidgets.QDialog):
         self.items2 = []
         for x in names2:
             item = QtGui.QStandardItem(x)
-            item.setCheckState(2 if  x in checked2 else 0)
+            item.setCheckState(QtCore.Qt.CheckState.Checked  if  x in checked2 else QtCore.Qt.CheckState.Unchecked )
             item.setCheckable(True)
             model2.appendRow(item)
             self.items2.append(item)
@@ -106,7 +106,7 @@ class CheckBoxDialog2(QtWidgets.QDialog):
 
         # OK and Cancel buttons
         self.buttons = QtWidgets.QDialogButtonBox(
-            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
             QtCore.Qt.Orientation.Horizontal, self)
         self.layout.addWidget(self.buttons)
         self.setWindowTitle(title)
@@ -115,15 +115,15 @@ class CheckBoxDialog2(QtWidgets.QDialog):
 
     # get current date and time from the dialog
     def checked(self):
-        return ([self.names[i] for i in range(len(self.names)) if 2==self.items[i].checkState()], [self.names2[i] for i in range(len(self.names2)) if 2==self.items2[i].checkState()])
+        return ([self.names[i] for i in range(len(self.names)) if QtCore.Qt.CheckState.Checked ==self.items[i].checkState()], [self.names2[i] for i in range(len(self.names2)) if QtCore.Qt.CheckState.Checked ==self.items2[i].checkState()])
 
     # static method to create the dialog and return (uncecked, accepted)
     @staticmethod
     def getChecked(title, names1, names2, checked1=[], checked2=[],  parent = None):
         dialog = CheckBoxDialog2(title, names1, names2, checked1, checked2, parent)
-        result = dialog.exec_()
+        result = dialog.exec()
         c = dialog.checked()
-        return (c[0], c[1], dialog.spinBox.value(), result == QtWidgets.QDialog.Accepted)
+        return (c[0], c[1], dialog.spinBox.value(), result == QtWidgets.QDialog.DialogCode.Accepted)
 
 
 

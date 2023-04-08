@@ -1,7 +1,7 @@
 
 #from PyQt6.QtWebKit import QWebView
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtCore import QObject, pyqtSlot
+from PyQt6.QtCore import QObject, pyqtSlot, QTimer
 import os
 
 
@@ -32,43 +32,58 @@ class OSMapsBrowser(QWebEngineView):
         self.last_id_list = None
         self.last_marked = None
         self.last_selection = None
+        self.last_event = {}
+        self.initialized = False
         #print("Maps inited")
    
     def mark_selected(self, ID, internal = False):
+        if not self.initialized:
+            self.last_event["mark_selected"] = {"ID":ID, "internal":internal}
+            return
+        if ID == self.last_marked: 
+            return
+        line = ''
+        #print("mark_selected", ID, self.last_marked, self.last_id_list)
         if self.last_id_list is None: return
         if self.last_marked is not None:
-            line = "markers["+str(self.last_marked) +"].setIcon("+self.unselected_icon_str+")"
-            #print line
-            self.page().runJavaScript(line)
+            line += "all_markers["+str(self.last_marked) +"].setIcon("+self.unselected_icon_str+");\n"
+            #self.page().runJavaScript(line)
         if internal:
             newid = ID
+            line += "all_markers["+str(newid) +"].setIcon("+self.current_icon_str +");\n"
         elif ID in self.last_id_list:
             newid = self.last_id_list.index(ID)
+            line += "all_markers["+str(newid) +"].setIcon("+self.current_icon_str +");\n"
         else:
-            self.last_marked = None
-            return
-        line = "markers["+str(newid) +"].setIcon("+self.current_icon_str +")"
-        #print line
+            newid = None
+            #return
+        #print (line)
         self.page().runJavaScript(line)
         self.last_marked = newid
 
     def update_selection(self, IDS, internal = False):
+        #print("update_selection", self.last_id_list, self.last_selection)
+        if not self.initialized:
+            self.last_event["update_selection"] = {"IDS":IDS, "internal":internal}
+            return
+        line = ''
         if self.last_id_list is None: return
         if self.last_selection is not None:
             for i in self.last_selection:
-                line = "markers["+str(i) +"].setIcon("+self.unselected_icon_str+")"
-                self.page().runJavaScript(line)
+                line += "all_markers["+str(i) +"].setIcon("+self.unselected_icon_str+");\n"
         #print ("update selection", IDS)
-        if IDS is None:
-            return
-        if internal:
-            newsel = IDS
-        else:
-            newsel = [self.last_id_list.index(i) for i in IDS if i in self.last_id_list]
-        for i in newsel:
-            line = "markers["+str(i) +"].setIcon("+self.selected_icon_str +")"
+        if IDS is not None:
+            if internal:
+                newsel = IDS
+            else:
+                newsel = [self.last_id_list.index(i) for i in IDS if i in self.last_id_list]
+            for i in newsel:
+                line += "all_markers["+str(i) +"].setIcon("+self.selected_icon_str +");\n"
+            self.last_selection = newsel
+
+        if line != '':
+            #print(line)
             self.page().runJavaScript(line)
-        self.last_selection = newsel
 
     def _html(self, x):
         print("result2", len(x))
@@ -79,6 +94,8 @@ class OSMapsBrowser(QWebEngineView):
         if not ok:
             print("Failed to load map!")
         else:
+            if not self.initialized:
+                self.initialized = True
             print("Map loaded successfully!")
 
         #self.count += 1
@@ -90,8 +107,21 @@ class OSMapsBrowser(QWebEngineView):
         frame.toHtml(self._html)
         #print(frame.toHtml())
         #print(("result", ok))
-        self.update_selection(self.last_selection, True)
-        self.mark_selected(self.last_marked, True)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.run_events)
+        self.timer.start(1000)
+
+    def run_events(self):
+        self.timer.stop()
+        #print("last_id_list",self.last_id_list)
+        for f in ["update_selection", "mark_selected"]:
+            kwargs = self.last_event.get(f, None)
+            if kwargs is not None:
+                if f == "update_selection":
+                    self.update_selection(**kwargs)
+                if f == "mark_selected":
+                    self.mark_selected(**kwargs)
+            self.last_event[f] = None
 
     
     #def clicked(self, owner, what):
@@ -112,9 +142,9 @@ class OSMapsBrowser(QWebEngineView):
         #does not work otherwise
         path = os.getcwd().replace(os.sep, "/")+"/etc/"
 
-        self.unselected_icon_str = "'file:///"+path+"detection.png'"
-        self.current_icon_str = "'file:///"+path+"current.png'"
-        self.selected_icon_str = "'file:///"+path+"selected.png'"
+        self.unselected_icon_str = 'unselectedIcon' #"'file:///"+path+"detection.png'"
+        self.current_icon_str =  'currentIcon' #"'file:///"+path+"current.png'"
+        self.selected_icon_str =  'selectedIcon' #"'file:///"+path+"selected.png'"
 
         html = OPEN_STREETMAP_TEMPLATE.replace("__POINT__LIST__", list_str).replace("__CENTER__COORDS__", center_str).replace("__ZOOM__", str(zoom)).replace("__CURRENT__DIR__", path)
         #print((os.getcwd()))

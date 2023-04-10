@@ -165,14 +165,14 @@ class SurfaceBrowser(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def mouse_press(self,event):
-        print("mouse_press", self.raster, "mode:", str(self.nav.mode.value))
+        #print("mouse_press", self.raster, "mode:", str(self.nav.mode.value))
         print(self.raster is not None and self.nav.mode.value == '')
         self.RS.set_active(self.raster is not None and self.nav.mode.value == '') # not self.nav.mode.value in ['pan', 'zoom'])
 
     def rectangle_selected(self, eclick, erelease):
         x1, y1 = eclick.xdata, eclick.ydata
         x2, y2 = erelease.xdata, erelease.ydata
-        print(("rectangle", x1, y1, x2,y2))
+        #print(("rectangle", x1, y1, x2,y2))
         rows = self.source.db().filter_rectangle(min(x1,x2), max(x1,x2), min(y1,y2), max(y1,y2))
         self.source.select_rows(rows)
 
@@ -205,7 +205,7 @@ class SurfaceBrowser(QtWidgets.QWidget):
         #    c[-1].hide()
 
     def mouse_release(self, event):
-        print("mouse_release")
+        #print("mouse_release")
         #!!2023 self.RS.set_active(False)
         if self.last_top_left is None: return
         ax = self.figure.gca()

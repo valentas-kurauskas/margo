@@ -80,15 +80,15 @@ class MargoWindow(QtWidgets.QDialog):
 
     def update_output(self):
         s = self.process.readAllStandardOutput()
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         self.outputbox.insertPlainText(s.data().decode("utf-8"))
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         print(s)
         print("decode", s.data().decode("utf-8"))
 
     def update_error(self):
         s = self.process.readAllStandardError()
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         self.outputbox.insertPlainText(s.data().decode("utf-8"))
         print(s)
 
@@ -123,7 +123,7 @@ class MargoWindow(QtWidgets.QDialog):
 
     def process_fail(self, error):
             #self.executing = False
-            self.outputbox.moveCursor(QtGui.QTextCursor.End)
+            self.outputbox.moveCursor(QtGui.QTextCursor.MoveOperation.End)
             self.outputbox.insertPlainText("FAILED:\n"+str(error))
             self.runButton.setEnabled(True)
             return
@@ -150,15 +150,15 @@ class MargoWindow(QtWidgets.QDialog):
         self.runButton.setEnabled(False)
         x = self.to_do.pop()
      
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         self.outputbox.insertPlainText("STARTING\n"+ " ".join([self.current_command] + [x] + self.current_args) + "\n")
-        self.outputbox.moveCursor(QtGui.QTextCursor.End)
+        self.outputbox.moveCursor(QtGui.QTextCursor.MoveOperation.End)
 
         self.process = QtCore.QProcess(self)
         self.process.finished.connect(self.next_job)
         self.process.readyReadStandardOutput.connect(self.update_output)
         self.process.readyReadStandardError.connect(self.update_error)
-        self.process.error.connect(self.process_fail)
+        self.process.errorOccurred.connect(self.process_fail)
         #print([repr(z) for z in [x] + self.current_args])
         self.process.start(self.current_command, [x] + self.current_args)
 

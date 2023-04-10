@@ -113,9 +113,9 @@ class ClassifierDialog(Ui_Dialog):
         self.textEdit.setText("")
 
     def appendOutput(self, text):
-        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+        self.textEdit.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         self.textEdit.insertPlainText(text)
-        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+        self.textEdit.moveCursor(QtGui.QTextCursor.MoveOperation.End)
         self.textEdit.update()
         if self.current_app is not None:
             self.current_app.processEvents()

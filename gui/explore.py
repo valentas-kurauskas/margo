@@ -558,7 +558,7 @@ class MainWindowContents(QtWidgets.QWidget):
 
 
         s = "maexplore_map.panTo( new L.LatLng("+str(wgs_x)[:7] + ", " + str(wgs_y)[:7] + "));"
-        #print(s)
+        print(s)
         self.the_map.page().runJavaScript(s);
         #self.the_map.mark_selected(self.table.db().get_item(cr, "ID"))
         self.the_map.mark_selected(cr)
@@ -865,8 +865,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def suggest_open(self, filename):
         filename = str(filename)
         if not os.path.isfile(filename): return 
-        r = QtWidgets.QMessageBox.question(self, "Margo GUI", "Processing finished. Do you want to open the last result?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if r == QtWidgets.QMessageBox.Yes:
+        r = QtWidgets.QMessageBox.question(self, "Margo GUI", "Processing finished. Do you want to open the last result?", QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+
+        #if r == QtWidgets.QMessageBox.Yes
+        if r == QtWidgets.QMessageBox.StandardButton.Yes:
             self.load_file(filename)
             self.margoWindow.hide()
         else:

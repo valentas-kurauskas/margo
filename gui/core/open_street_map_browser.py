@@ -57,7 +57,7 @@ class OSMapsBrowser(QWebEngineView):
         else:
             newid = None
             #return
-        #print (line)
+        print (line)
         self.page().runJavaScript(line)
         self.last_marked = newid
 
@@ -82,7 +82,7 @@ class OSMapsBrowser(QWebEngineView):
             self.last_selection = newsel
 
         if line != '':
-            #print(line)
+            print(line)
             self.page().runJavaScript(line)
 
     def _html(self, x):

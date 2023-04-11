@@ -557,7 +557,7 @@ class MainWindowContents(QtWidgets.QWidget):
         wgs_x,wgs_y = lks94_to_wgs(x,y)
 
 
-        s = "maexplore_map.panTo( new L.LatLng("+str(wgs_x)[:7] + ", " + str(wgs_y)[:7] + "));"
+        s = "detections_map.panTo( new L.LatLng("+str(wgs_x)[:7] + ", " + str(wgs_y)[:7] + "));"
         print(s)
         self.the_map.page().runJavaScript(s);
         #self.the_map.mark_selected(self.table.db().get_item(cr, "ID"))
@@ -630,7 +630,7 @@ class MainWindowContents(QtWidgets.QWidget):
         if True:
             bounds = None
             try:
-                q = "String([maexplore_map.getBounds()._southWest.lat, maexplore_map.getBounds()._southWest.lng, maexplore_map.getBounds()._northEast.lat, maexplore_map.getBounds()._northEast.lng])"
+                q = "String([detections_map.getBounds()._southWest.lat, detections_map.getBounds()._southWest.lng, detections_map.getBounds()._northEast.lat, detections_map.getBounds()._northEast.lng])"
                 S = self.the_map.page().runJavaScript(q);
                 print(("bounds", S.typeName(), str(S.toString())))
                 #[(x, y.toMap()) for x,y in S.toMap().iteritems()]

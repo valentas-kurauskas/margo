@@ -1,9 +1,0 @@
-#python3 version is still a bit experimental
-#tested only on Ubuntu 22.04
-numpy
-scipy
-matplotlib
-scikit-sklearn
-GDAL==3.4.1
-PyQt6
-PyQt6-WebEngine

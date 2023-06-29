@@ -81,24 +81,14 @@ class GdalMap:
 
         band = self.dataset.GetRasterBand(1)
         matrix = band.ReadAsArray(tlx,tly, (brx-tlx), (bry - tly))
+        if len(matrix) > 0:
+            nodata_value = band.GetNoDataValue()
+            matrix[matrix==nodata_value] = float("nan")
         if xy:
             xrow = [int(top_left[0] + i * self.dx) for i in range(brx-tlx)]
             yrow = [int(top_left[1] + i * self.dy) for i in range(bry-tly)]
             x,y = np.meshgrid(xrow, yrow)
             return x,y,matrix
         else:
-            #print matrix
             return matrix
 
-
-#def plot_matrix(x):
-#    #fig = plt.figure()
-#    #ax = fig.add_subplot(111, projection='3d')
-#    #ax.plot_surface(x,y,z,rstride=1, cstride=1, cmap=cm.jet, shade = True)
-#    #plt.show()
-#    plt.imshow(ls.shade(x, cm.gist_earth))
-   
-
-#m = Map(sys.argv[1], load_proj(sys.argv[2]))
-#r = m.get_rectangle( (602196,6090695), (602396, 6090500))
-#plot_matrix(r)

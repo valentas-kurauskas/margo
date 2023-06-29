@@ -5,5 +5,5 @@ scipy
 matplotlib
 scikit-sklearn
 GDAL==3.4.1
-PyQt5
-PyQtWebEngine
+PyQt6
+PyQt6-WebEngine

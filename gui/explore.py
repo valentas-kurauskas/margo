@@ -150,7 +150,8 @@ class CoordDBView(QtWidgets.QTableView):
 
     def current_row(self):
         #self.selectionModel().currentIndex().row()
-        return self.model().mapToSource(self.selectionModel().currentIndex()).row()  #todo put the proxy inside this class.
+        if self.model():
+            return self.model().mapToSource(self.selectionModel().currentIndex()).row()  #todo put the proxy inside this class.
 
     def selected_rows(self):
         m = self.model()
@@ -756,6 +757,8 @@ class MainWindowContents(QtWidgets.QWidget):
             return
         #print ("Updating raster, because it is visible")
         cr = self.table.current_row()
+        if cr is None:
+            return
         #print ("cr", cr)
         x = self.table.db().get_item(cr, "LONGITUDE")
         y = self.table.db().get_item(cr, "LATITUDE")
@@ -883,7 +886,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createDockWidgets(*zip(*[(mwc.infobox, "Info"),
                            (mwc.canvas, "Profile"),
                             (mwc.canvas3d, "3D"),
-                            (mwc.the_map, "Google Maps"),
+                            (mwc.the_map, "Map"),
                             (mwc.raster_map, "Raster"),
                             (mwc.filter_tab, "Filter")]))
         mwc.the_map.corresponding_dock.visibilityChanged.connect(mwc.update_map2)
@@ -952,7 +955,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 
-        showSelected = QtGui.QAction('Refresh Google map', self)
+        showSelected = QtGui.QAction('Refresh map', self)
         #openFile.setShortcut('Ctrl+O')
         showSelected.setStatusTip('Show all visible objects')
         showSelected.triggered.connect(self.mwc.show_map)

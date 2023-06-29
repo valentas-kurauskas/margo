@@ -386,7 +386,8 @@ class SurfaceBrowser(QtWidgets.QWidget):
                 print("No raster at this point")
                 return
             #print (r.max(), r.min())
-            r= np.ma.array(r, mask= (r<-9999)) #mask
+            #r= np.ma.array(r, mask= (r<-9989)) #mask
+            r= np.ma.array(r, mask= (np.isnan(r))) #mask
             gist_tampered = cm.gist_earth
             gist_tampered.set_bad('k', 1.0)
             #print (r)

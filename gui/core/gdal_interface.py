@@ -83,7 +83,10 @@ class GdalMap:
         matrix = band.ReadAsArray(tlx,tly, (brx-tlx), (bry - tly))
         if len(matrix) > 0:
             nodata_value = band.GetNoDataValue()
-            matrix[matrix==nodata_value] = float("nan")
+            if nodata_value is not None:
+                matrix[matrix==nodata_value] = float("nan")
+            else: # my old data has -9999 and nodata_value is not properly set
+                matrix[matrix<=-9998] = float("nan")
         if xy:
             xrow = [int(top_left[0] + i * self.dx) for i in range(brx-tlx)]
             yrow = [int(top_left[1] + i * self.dy) for i in range(bry-tly)]

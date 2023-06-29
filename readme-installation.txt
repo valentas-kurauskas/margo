@@ -14,7 +14,7 @@ check that all `ulimit` limits are unset.
 
 RUNNING THE GUI
 
-Go to `gui/` and run `python explore.py`.
+Go to `gui/` and run `poetry shell`, then `python explore.py`.
 
 COMPILING THE C++ BACKEND
 

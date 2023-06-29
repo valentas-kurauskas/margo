@@ -382,15 +382,15 @@ class SurfaceBrowser(QtWidgets.QWidget):
         if not only_points:
             #ax.set_aspect("equal", "datalim")
             r = self.raster.get_rectangle(top_left, bottom_right)
-            if len(r) == 0: 
-                print("No raster at this point")
-                return
             #print (r.max(), r.min())
             #r= np.ma.array(r, mask= (r<-9989)) #mask
             r= np.ma.array(r, mask= (np.isnan(r))) #mask
+            if r.count() == 0:
+                print("No raster at this point. Have you loaded a correct sheet?")
+                return
             gist_tampered = cm.gist_earth
             gist_tampered.set_bad('k', 1.0)
-            #print (r)
+   
             r = self.light_source.shade(r, gist_tampered) #create shadows
             dim = (len(r), len(r[0]))
 
